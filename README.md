@@ -176,22 +176,36 @@ Say so plainly — the disclosure is required, not penalised. -->
 I labelled in the terminal with [labelling/label.py](labelling/label.py), one post at a time, then built `labels.csv` with [labelling/build_labels.py](labelling/build_labels.py). Every row's `note` says which path it took.
 - **Cold first, no AI:** I labelled 20 randomly chosen posts on my own, before starting the review of AI suggestions (the tool will not start the review until those are done). I kept 12 and excluded 8. Their note is `cold`.
 - **AI pre-labelled, then reviewed by me:** Claude Code suggested a label for the other 370 posts and marked 77 as unsure with its reason. I read every one and entered my own label: I kept the AI label on 285, changed it on 19 (15 of those from `reaction` to `info`), and excluded 66, including the 16 the AI had already suggested excluding. Their note is `AI-assisted; human-reviewed`, with "kept AI label" or "changed from <label>".
-- **Exclusions:** 74 of the 390 in total, so `labels.csv` has 316 rows.
+- **Exclusions:** 74 of the 390 in total, so `labels.csv` had 316 rows for the original training run.
+- **Stretch batches, added later and reviewed the same way:** 64 extra likely-`opinion` comments and 57 comments for the new `question` label (see [Stretch Features](#stretch-features)). I kept the AI label on all 121. I also re-labelled the six questions I had excluded under the old rules: five stay excluded and one (r275) became `opinion`. That brings `labels.csv` to 438 rows.
 - **Known weakness:** after I built the file, Claude flagged about 24 of my labels (most of the cold rows and several early review rows) as possibly conflicting with my written rules, for example "idk why but this vlog made me tear up" labelled `info`, and plain gushing excluded although it is on none of my exclusion lists. I kept the labels as committed. This matters for criterion 5 and is a likely source of noise in the model.
 
 **Counts per label:**
 
 | Label | Count | Share |
 |---|---|---|
+Current `labels.csv`, after the stretch features:
+
+| Label | Count | Share |
+|---|---|---|
+| `info` | 73 | 16.7% |
+| `opinion` | 122 | 27.9% |
+| `reaction` | 192 | 43.8% |
+| `question` | 51 | 11.6% |
+| **Total** | 438 | 100% |
+
+The largest label is 43.8%, well under the brief's 70% cap. Criterion 3 (largest at most 60%, smallest at least 15%) is **missed**, because `question` is 11.6%.
+
+The original training run (`results.json`) used `labels.csv` as of commit 32a4243, before the stretch features:
+
+| Label | Count | Share |
+|---|---|---|
 | `info` | 71 | 22.5% |
 | `opinion` | 56 | 17.7% |
 | `reaction` | 189 | 59.8% |
-| `question` | 0 | 0% |
 | **Total** | 316 | 100% |
 
-`question` has no rows yet: its 57 candidate comments are waiting for my review (see [Stretch Features](#stretch-features)).
-
-The largest label is 59.8%, under the brief's 70% cap and my criterion 3 limit of 60%, and the smallest is 17.7% (criterion 3 needs at least 15%), so criterion 3 is met, narrowly.
+On that file the largest label was 59.8% and the smallest 17.7%, so criterion 3 was met, narrowly.
 
 **Three hard cases**
 
@@ -287,13 +301,13 @@ Stratified 70/15/15 split, seed 42: **train 220, validation 48, test 48.**
 
 ## Stretch Features
 
-I intend to complete all three stretch features. Status as of this commit:
+I set out to complete all three stretch features (stated here before starting). Status:
 
 | Feature | Status |
 |---|---|
-| 1. 50 extra examples for the thinnest label (`opinion`) | Collected and AI pre-screened; **waiting for my review**, so not yet in `labels.csv` |
+| 1. 50 extra examples for the thinnest label (`opinion`) | **Done**: 64 added, `opinion` 56 → 122 |
 | 2. Second training run with one hyperparameter changed | **Done** (results below) |
-| 3. A fourth label | **`question` approved and added to the taxonomy, label map and notebook**; its 57 candidate comments are **waiting for my review**, then retraining |
+| 3. A fourth label | **Done**: `question` added to the taxonomy, label map and notebook; 51 rows; retrained with four labels |
 
 ### 1. 50 extra `opinion` examples
 
@@ -301,7 +315,8 @@ I intend to complete all three stretch features. Status as of this commit:
 - **Where they came from:** the same Arctic Shift download as the main set (r/bangtan, 13-20 Oct 2026). After the same filters, 989 comments had never been sampled. Claude Code keyword-matched 242 of them (for example "I think", "should", "better", "underrated", "because") and read all 242 against my rules. It proposed **64** as likely `opinion`, 21 of them marked unsure with a reason.
 - **Unlike the main set, these were chosen because they looked like `opinion`.** That is the point of this feature, but it means they are not a random sample of the community.
 - **Files:** [labelling/extra_opinion_review.csv](labelling/extra_opinion_review.csv) (text copied exactly as posted). Each row's comment ID and permalink are in [labelling/sources.csv](labelling/sources.csv), batch `stretch1_opinion_topup`. None duplicates or near-duplicates a row already in the dataset.
-- **Next step (mine):** review every row with `python labelling/label.py extra`, then rebuild with `python labelling/build_labels.py --write`. Rows I don't label stay out. Their note will read `AI-assisted (opinion top-up); human-reviewed, ...`. The counts table above will be updated then.
+- **Review:** I labelled every row with `python labelling/label.py extra` and kept `opinion` on all 64. Their note reads `AI-assisted (opinion top-up); human-reviewed, kept AI label`.
+- **Result:** `opinion` went from 56 to 122 rows (17.7% → 27.9%), and it is no longer the thinnest label (`question` is).
 
 ### 2. Second training run: 6 epochs instead of 3
 
@@ -329,18 +344,39 @@ I intend to complete all three stretch features. Status as of this commit:
 - **What I found:** one kind of comment my three labels had no place for: a fan asking other fans for something. The 2,000 comments downloaded include 44 question-only ones (after the usual thread and mod filters), for example "Where can I find the translations of the ments?". During review I also excluded several longer ones (such as r048, asking for Rio activity and food recommendations), because my v3 rules sent all question-only comments to the exclusion list. They are not `info` (they supply nothing checkable), not `opinion` (no side) and not really `reaction`, and the natural reply to them is an answer.
 - **What I decided:** I approved `question` as the fourth label, with the definition, examples and Rule 4 under [Label Taxonomy](#question). Considered and rejected: a `joke` label, because jokes on r/bangtan are a tone, not a different main point; Rule 1 already sends a joking claim to `opinion` and a joking feeling to `reaction`.
 - **What changed:** `question` is now in `LABELS` in [takemeter.ipynb](takemeter.ipynb) and [labelling/build_labels.py](labelling/build_labels.py), in [label_definitions.txt](label_definitions.txt) (so the baseline sees it), and in the rules in [taxonomy_stress_test.md](taxonomy_stress_test.md). The labelling tool takes `?` for `question`. No existing label was changed.
-- **Data:** [labelling/question_review.csv](labelling/question_review.csv) holds 57 real comments: the 44 question-only comments minus one near-duplicate, plus 14 longer requests from the unused pool. Claude Code suggested `question` for 51 and another label for 6 (for example a rhetorical joke as `reaction`), and marked 19 as unsure. Provenance is in `labelling/sources.csv`, batch `stretch3_question`. Their note will read `AI-assisted (question batch); human-reviewed, ...`.
-- **Rows already in the sheet that my old rule excluded:** r027, r043, r048, r137, r146 and r275 are questions I marked `EXCLUDE` under the v3 rules. They need my label again under Rule 4: `python labelling/label.py redo r027 r043 r048 r137 r146 r275`. That is relabelling because the rule changed, not to move the counts.
-- **Not done yet:** my review of the 57 rows and the 6 redo rows, rebuilding `labels.csv`, and retraining with four labels. Until then `labels.csv` has no `question` rows, and running the notebook prints a warning that `question` never appears.
+- **Data:** [labelling/question_review.csv](labelling/question_review.csv) holds 57 real comments: the 44 question-only comments minus one near-duplicate, plus 14 longer requests from the unused pool. Claude Code suggested `question` for 51 and another label for 6 (for example a rhetorical joke as `reaction`), and marked 19 as unsure. Provenance is in `labelling/sources.csv`, batch `stretch3_question`. I labelled all 57 and kept the AI label on every one: 51 `question`, 3 `reaction`, 2 `info`, 1 `opinion`. Their note reads `AI-assisted (question batch); human-reviewed, kept AI label`.
+- **Rows already in the sheet that my old rule excluded:** r027, r043, r048, r137, r146 and r275 are questions I marked `EXCLUDE` under the v3 rules. I labelled them again under Rule 4 (`python labelling/label.py redo ...`): five I kept as `EXCLUDE`, and r275 became `opinion`. That is relabelling because the rule changed, not to move the counts.
+- **Retrained with four labels:** default settings (3 epochs, lr 2e-5, batch 16, max length 128, seed 42, `mps`) on all 438 rows, run with `python run_experiment.py --out experiments/results_4labels.json`. The notebook's data check printed "Data looks fine." Split: train 306, validation 66, test 66; the test split has 11 `info`, 18 `opinion`, 29 `reaction` and **8 `question`**, right at the "about 8" line. Its test posts are in [experiments/results_4labels_test_split.csv](experiments/results_4labels_test_split.csv), and results in [experiments/results_4labels.json](experiments/results_4labels.json).
+
+| Measure | Four labels, 438 rows (66 test posts) |
+|---|---|
+| Accuracy | 0.500 |
+| Macro F1 | 0.271 |
+| F1 `info` (n=11) | 0.000 |
+| F1 `opinion` (n=18) | 0.452 |
+| F1 `reaction` (n=29) | 0.634 |
+| F1 `question` (n=8) | 0.000 |
+| Most-confident third accuracy | 0.682 |
+| Least-confident third accuracy | 0.227 |
+
+| true \ predicted | `info` | `opinion` | `reaction` | `question` |
+|---|---|---|---|---|
+| **`info`** | 0 | 3 | 8 | 0 |
+| **`opinion`** | 0 | 7 | 11 | 0 |
+| **`reaction`** | 0 | 3 | 26 | 0 |
+| **`question`** | 0 | 0 | 8 | 0 |
+
+- **What moved:** this is a different dataset and a different test split from run 1, so the numbers are not a like-for-like comparison. The model now predicts `opinion` for 13 posts (7 correctly), where run 1 never predicted it. It still never predicts `info` or `question`, and sends all 8 `question` posts to `reaction`. Part of the `opinion` gain may come from how the top-up was chosen: those comments were picked partly by words like "I think" and "should", so they may be easier to spot than a random `opinion` comment, and 11 of the 18 `opinion` test posts came from that batch.
 - **The stress test was not repeated for `question`.** The 16 synthetic posts in taxonomy_stress_test.md tested the three-label rules only.
 
 ### Limitations
 
-- Features 1 and 3 are not finished until I review their rows (64 and 57, plus 6 redo rows); until then the dataset and counts above are unchanged.
-- With four labels, criterion 3 (smallest label at least 15%) will probably be missed: about 50 `question` rows in roughly 470 would be about 11%. criteria.md was filed before training and stays as written, so I will report that honestly rather than change the target.
+- With four labels, criterion 3 (smallest label at least 15%) is missed: `question` is 11.6%. criteria.md was filed before training and stays as written.
+- I kept the AI label on all 121 stretch rows, so those labels rest on my agreeing with every suggestion, including the 40 marked unsure.
+- The four-label run is one seed with only 8 `question` posts in test, so its `question` score could move a lot on another seed.
 - Feature 2 is one seed and one test split of 48 posts. A one-post difference could reverse on another seed.
 - `label_definitions.txt` now has four definitions, but the committed `baseline_results.json` was scored with the original three, on the three-label `test_split.csv`. A fair Unit 6 comparison uses those three-label files together; re-running the baseline now would give it a fourth option the test posts were never labelled with.
-- `results.json` (run 1) was trained on `labels.csv` as of commit 32a4243. If `labels.csv` grows with feature 1, run 1 stays the record of the original dataset.
+- `results.json` and `test_split.csv` (run 1) were trained and tested on `labels.csv` as of commit 32a4243 (316 rows, three labels) and are unchanged; they remain the record of the original run. Running the notebook now trains on the 438-row, four-label file and would overwrite them, so later runs should go through `run_experiment.py` or be committed under a new name.
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
 
