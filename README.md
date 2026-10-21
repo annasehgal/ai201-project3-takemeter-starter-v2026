@@ -154,41 +154,50 @@ That makes 390 candidate comments from 70 threads.
 
 **How I labelled them:** <!-- Cold first? Pre-labelled with AI and corrected?
 Say so plainly — the disclosure is required, not penalised. -->
+I labelled in the terminal with [labelling/label.py](labelling/label.py), one post at a time, then built `labels.csv` with [labelling/build_labels.py](labelling/build_labels.py). Every row's `note` says which path it took.
+- **Cold first, no AI:** I labelled 20 randomly chosen posts on my own, before starting the review of AI suggestions (the tool will not start the review until those are done). I kept 12 and excluded 8. Their note is `cold`.
+- **AI pre-labelled, then reviewed by me:** Claude Code suggested a label for the other 370 posts and marked 77 as unsure with its reason. I read every one and entered my own label: I kept the AI label on 285, changed it on 19 (15 of those from `reaction` to `info`), and excluded 66, including the 16 the AI had already suggested excluding. Their note is `AI-assisted; human-reviewed`, with "kept AI label" or "changed from <label>".
+- **Exclusions:** 74 of the 390 in total, so `labels.csv` has 316 rows.
+- **Known weakness:** after I built the file, Claude flagged about 24 of my labels (most of the cold rows and several early review rows) as possibly conflicting with my written rules, for example "idk why but this vlog made me tear up" labelled `info`, and plain gushing excluded although it is on none of my exclusion lists. I kept the labels as committed. This matters for criterion 5 and is a likely source of noise in the model.
 
 **Counts per label:**
 
 | Label | Count | Share |
 |---|---|---|
-| `info` |  |  |
-| `opinion` |  |  |
-| `reaction` |  |  |
-| **Total** |  | 100% |
+| `info` | 71 | 22.5% |
+| `opinion` | 56 | 17.7% |
+| `reaction` | 189 | 59.8% |
+| **Total** | 316 | 100% |
+
+The largest label is 59.8%, under the brief's 70% cap and my criterion 3 limit of 60%, and the smallest is 17.7% (criterion 3 needs at least 15%), so criterion 3 is met, narrowly.
 
 **Three hard cases**
 
 <!-- Any post that made you pause: what it was, which two labels it could have
      been, and what you chose. These are worth more than the easy 190. -->
 
+All eight hard cases I recorded, with my decisions, are in [labelling/hard_cases.md](labelling/hard_cases.md).
+
 **1.**
-> *The post:*
+> *The post:* "Bencoolen might be a better choice as the train station is closer to the National Musuem of Singapore, which already has announced themed light and sound installations" (r/bangtan comment [phmjlb7](https://www.reddit.com/r/bangtan/comments/1x9iv6m/_/phmjlb7/))
 >
-> *Could have been:*
+> *Could have been:* `info` (Rule 3: advice to readers with a checkable fact about the station) or `opinion` (Rule 2: a recommendation of X over Y)
 >
-> *I chose, because:*
+> *I chose, because:* `opinion`, because it is an opinion about which place might be better. The facts are there to support choosing one station over another.
 
 **2.**
-> *The post:*
+> *The post:* "I'm so so excited I feel like throwing up guys, there's already thousands outside the stadium it seems, I will be arriving in a few hours. [...] Don't expect many videos because the internet connection at the concert will be terrible, so most will upload them later." (r/bangtan comment [pgotr45](https://www.reddit.com/r/bangtan/comments/1x5qn7y/_/pgotr45/))
 >
-> *Could have been:*
+> *Could have been:* `reaction` (almost all of it is the writer's excitement) or `info` (it ends with a heads-up to readers, which Rule 3 sends to `info`)
 >
-> *I chose, because:*
+> *I chose, because:* `reaction`, because it is a reaction to how it feels to be outside the stadium. The heads-up is one line at the end of a post about the writer's own experience.
 
 **3.**
-> *The post:*
+> *The post:* "Jin - Crystal Snow Yoongi - Pied Piper Hobi - Jamais Vu Namjoon - One more night Jimin - Lights Taehyung - Epilogue Young Forever Jungkook - Dynamite" (r/bangtan comment [phglz9l](https://www.reddit.com/r/bangtan/comments/1x8xi2j/_/phglz9l/))
 >
-> *Could have been:*
+> *Could have been:* `opinion` (Rule 1(c): an unmarked comparison) or `reaction` (nearly identical lists in the same thread that say "for me" are `reaction`)
 >
-> *I chose, because:*
+> *I chose, because:* `opinion`, because it is the writer's view of which song each member is, given with no "for me" to mark it as personal taste.
 
 ---
 
@@ -196,15 +205,28 @@ Say so plainly — the disclosure is required, not penalised. -->
 
 <!-- Your starting model, your settings, and anything you changed and why. -->
 
-**Base model:**
+**Base model:** `distilbert-base-uncased`, fine-tuned for 3-label classification with the notebook's `train_model`.
 
 **Settings:** <!-- epochs, learning rate, batch size, seed -->
+3 epochs, learning rate 2e-5, batch size 16, max length 128 tokens, seed 42 (the notebook defaults). Trained on 316 rows of `labels.csv`.
+- **Device:** `mps` (Apple Silicon GPU, Apple M2 Pro), torch 2.14.1, transformers 4.57.6. `results.json` records the device too. Another machine with the same data and seed can give slightly different numbers.
+- **Run time:** about 15 seconds of training.
+- **How it was run:** Claude Code ran the code cells of sections 1-5 in order, unchanged, as a script with this project's `.venv` Python from the repo folder (the `.venv` has no `ipykernel`, so it could not run as a notebook kernel). Sections 6 and 7 were not run.
 
-**Anything I changed from the defaults, and why:**
+**Anything I changed from the defaults, and why:** Nothing. Every setting is the default.
 
 **Split sizes:** <!-- train / val / test, and per-label counts in the test
 split. If a label had fewer than about 8 in test, say so — it explains a lot
 of next unit's variance. -->
+Stratified 70/15/15 split, seed 42: **train 220, validation 48, test 48.**
+
+| Label | Train | Val | Test |
+|---|---|---|---|
+| `info` | 49 | 11 | 11 |
+| `opinion` | 40 | 8 | 8 |
+| `reaction` | 131 | 29 | 29 |
+
+`opinion` has only 8 posts in the test split, right at the "about 8" line, so its per-label score can move a lot between seeds. `info` has 11.
 
 
 
@@ -234,8 +256,9 @@ of next unit's variance. -->
 **Pre-labelling disclosure:** Claude Code (an AI agent) did most of the Milestone 1-4 setup work:
 - **Milestones 1 and 2:** it pulled the comments, drafted the reading notes, proposed the labels and rules, and ran the stress test. I reviewed the results.
 - **Milestone 4:** it collected the 390 candidate comments and pre-labelled 370 of them, marking 77 as unsure with a reason. Those pre-labels are in [labelling/review_ai_suggestions.csv](labelling/review_ai_suggestions.csv).
-- **The 20 cold rows** were not pre-labelled. I label those myself, without AI.
-- **Every pre-labelled row has to be read and given my own label** before it can enter `labels.csv`. The `note` column records, for each row, whether I kept or changed the AI label.
+- **The 20 cold rows** were not pre-labelled. I labelled those myself, without AI, before starting the review.
+- **I read every pre-labelled row and gave it my own label** before it entered `labels.csv`: 285 kept, 19 changed, 66 excluded. The `note` column records which, row by row.
+- **Claude Code also** wrote the labelling and build scripts and, after I built the file, flagged labels of mine that looked inconsistent with my rules. It did not change any label.
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
 
