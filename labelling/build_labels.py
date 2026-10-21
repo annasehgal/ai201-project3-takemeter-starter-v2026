@@ -8,6 +8,8 @@ Build labels.csv from the two labelling sheets, then validate it.
 Inputs (all in labelling/):
     cold_20.csv                 your 20 cold labels (your_label column)
     review_ai_suggestions.csv   AI suggestions; your_label is YOUR reviewed label
+    extra_opinion_review.csv    stretch feature 1: extra likely-`opinion` comments
+    question_review.csv         stretch feature 3: comments for the fourth label
     sources.csv                 Reddit comment ID and permalink for every row
 
 Rules:
@@ -27,7 +29,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
-LABELS = ["info", "opinion", "reaction"]   # must match LABELS in takemeter.ipynb
+LABELS = ["info", "opinion", "reaction", "question"]   # must match LABELS in takemeter.ipynb
 MAX_SHARE, MIN_SHARE = 0.60, 0.15          # criteria.md, criterion 3
 BRIEF_CAP = 0.70
 
@@ -75,6 +77,28 @@ def main():
             changed += 1
         out.append((r["text"], label, note))
 
+    # Stretch features: extra batches, each reviewed the same way as the main sheet.
+    #   1: comments pre-screened as likely `opinion`
+    #   3: comments for the fourth label, `question`
+    extra_kept = 0
+    for sheet, tag in (("extra_opinion_review.csv", "opinion top-up"),
+                       ("question_review.csv", "question batch")):
+        if not (HERE / sheet).exists():
+            continue
+        for r in read(sheet):
+            label = r["your_label"].strip().lower()
+            if not label:
+                unreviewed.append(r["row_id"])
+                continue
+            if label == "exclude":
+                excluded.append(r["row_id"])
+                continue
+            rid = sources[r["row_id"]]["reddit_comment_id"]
+            how = ("kept AI label" if label == r["ai_label"].strip().lower()
+                   else f"changed from {r['ai_label']}")
+            out.append((r["text"], label, f"AI-assisted ({tag}); human-reviewed, {how}; reddit:{rid}"))
+            extra_kept += sheet.startswith("extra") and label == "opinion"
+
     bad = sorted({lab for _, lab, _ in out if lab not in LABELS})
     if bad:
         problems.append(f"labels not in {LABELS}: {bad} (use EXCLUDE to drop a row)")
@@ -89,6 +113,8 @@ def main():
     print(f"rows in labels.csv: {total}")
     print(f"  cold: {cold_kept}   AI-assisted kept: {kept}   AI-assisted changed: {changed}")
     print(f"  excluded by you: {len(excluded)}   not reviewed yet (left out): {len(unreviewed)}")
+    if (HERE / "extra_opinion_review.csv").exists():
+        print(f"  opinion top-up rows you kept as opinion: {extra_kept}")
     print()
     for lab in LABELS:
         share = counts[lab] / total if total else 0

@@ -9,13 +9,14 @@ The label definitions and the rule for the hardest boundary (`reaction` vs
 `opinion`, Rule 1 below) are in [README.md, Label Taxonomy](README.md#label-taxonomy).
 This page holds the complete final rules, how they were tested, and what changed.
 
-## Final rules (v3)
+## Final rules (v4)
 
-**Not labelled at all:** comments that are only an image, GIF or link, only a
-question or request with no claim or information in it, mod or AutoModerator
+v4 is v3 plus the fourth label, `question` (stretch feature 3): question-only comments moved off the exclusion list and Rule 4 was added. Everything else is unchanged from v3, which is what the stress test below tested. **Rule 4 was not stress-tested.**
+
+**Not labelled at all:** comments that are only an image, GIF or link, mod or AutoModerator
 messages, not in English, or not about BTS or the fandom at all (for
-example, comments in the sub's off-topic book club). If a question *also* contains a claim or a fact,
-it's labelled by that content.
+example, comments in the sub's off-topic book club). (In v3, question-only comments were
+excluded too; in v4 they go to Rule 4.)
 
 Apply the rules in order. Use the tie-breaker only if the rules don't decide.
 
@@ -53,10 +54,18 @@ contains a checkable fact ("PSA", "heads up", "go early") is `info`, even inside
 a personal story. Otherwise, if the facts are there to tell the writer's own
 story or feeling, it's `reaction`.
 
+**Rule 4 (`question` vs the rest, added in v4).** If the comment's main point is
+to ask other fans for information, a recommendation or help, and another fan
+could answer it with a fact or a recommendation, it's `question`. Rhetorical or
+gushing questions ("What even is that pose JK?") aren't requests, so they go
+through Rules 1-3. If the comment also makes a claim, label it by its main
+point: is it there to get an answer?
+
 **Tie-breaker.** Imagine the natural reply:
 - "Thanks, didn't know that" means `info`.
 - "Agree / hard disagree" means `opinion`.
 - "Same / so jealous" means `reaction`.
+- "Here's where to find it / the answer is..." means `question`.
 
 ## Method
 

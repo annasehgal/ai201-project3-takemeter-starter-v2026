@@ -46,3 +46,16 @@ The script only includes rows you labelled. It writes the `note` column
 (`cold`, or AI-assisted and kept or changed, plus the Reddit ID). It also
 checks label names, duplicates, the 200-row floor, the brief's 70% cap and
 criterion 3.
+
+## Stretch features (after the main set)
+
+    .venv/bin/python labelling/label.py extra       # 64 extra likely-`opinion` comments
+    .venv/bin/python labelling/label.py questions   # 57 comments for the fourth label
+    .venv/bin/python labelling/label.py redo r027 r043 r048 r137 r146 r275
+    .venv/bin/python labelling/build_labels.py --write
+
+`?` (or typing `question`) labels a row `question`. Use Rule 4 in
+`taxonomy_stress_test.md`. The redo rows are questions excluded under the old
+rules; label them again under Rule 4. The build script includes only rows you
+labelled, and marks these batches `AI-assisted (opinion top-up)` and
+`AI-assisted (question batch)` in the note.

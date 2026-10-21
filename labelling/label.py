@@ -7,10 +7,12 @@ every row, so you can quit (q) and come back later; it resumes where you left of
     python labelling/label.py cold      # step 1: the 20 cold rows, text only
     python labelling/label.py review    # step 2: the 370 AI-suggested rows
     python labelling/label.py hard      # step 3: your decisions on the hard cases
+    python labelling/label.py extra     # stretch 1: the extra likely-opinion comments
+    python labelling/label.py questions # stretch 3: comments for the fourth label
     python labelling/label.py redo r014 r065   # clear those rows and label them again
 
 Keys (type the letter, then Enter):
-    i = info    o = opinion    r = reaction    x = EXCLUDE
+    i = info    o = opinion    r = reaction    ? = question    x = EXCLUDE
     b = back one row    q = save and quit
     In review only: Enter on its own = keep the AI label shown.
 
@@ -22,10 +24,13 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-KEYS = {"i": "info", "o": "opinion", "r": "reaction", "x": "EXCLUDE"}
+KEYS = {"i": "info", "o": "opinion", "r": "reaction", "?": "question", "x": "EXCLUDE"}
+KEYS.update({v.lower(): v for v in list(KEYS.values())})   # full names work too
 RULES = ("Rule 1: strip feelings; about the writer or restating the post = reaction, "
          "adds a claim = opinion.\nRule 2: facts used as ammunition = opinion.  "
-         "Rule 3: advice/PSA with a checkable fact = info.")
+         "Rule 3: advice/PSA with a checkable fact = info.\n"
+         "Rule 4: main point is asking fans for an answer they could give = question; "
+         "rhetorical questions go through Rule 1.")
 
 
 def load(name):
@@ -55,7 +60,7 @@ def ask(prompt, allow_enter=False):
             return "q"
         if k in KEYS or k in ("b", "q") or (allow_enter and k == ""):
             return k
-        print("  use i / o / r / x, b (back), q (quit)" + (", or Enter to keep" if allow_enter else ""))
+        print("  use i / o / r / ? / x, b (back), q (quit)" + (", or Enter to keep" if allow_enter else ""))
 
 
 def run(name, show_ai):
@@ -79,7 +84,7 @@ def run(name, show_ai):
             print(f"AI suggests: {r['ai_label']}{flag}")
             if r["ai_note"].strip():
                 print(f"AI note: {r['ai_note']}")
-        k = ask("label [i/o/r/x" + (", Enter=keep" if show_ai else "") + ", b, q]: ", allow_enter=show_ai)
+        k = ask("label [i/o/r/?/x" + (", Enter=keep" if show_ai else "") + ", b, q]: ", allow_enter=show_ai)
         if k == "q":
             break
         if k == "b":
@@ -110,7 +115,7 @@ def hard():
         print("\n" + "=" * 78)
         print(part.split("- **My final label:**")[0].strip())
         print("=" * 78)
-        k = ask("your final label [i/o/r/x, Enter=skip this case, q]: ", allow_enter=True)
+        k = ask("your final label [i/o/r/?/x, Enter=skip this case, q]: ", allow_enter=True)
         if k == "q":
             break
         if k in ("", "b"):
@@ -138,6 +143,12 @@ def status():
     print(f"cold:   {done(cold)} / {len(cold)}")
     print(f"review: {done(rev)} / {len(rev)}")
     print(f"hard:   {total - blank} / {total} decided (need 3)")
+    if (HERE / "extra_opinion_review.csv").exists():
+        _, ex = load("extra_opinion_review.csv")
+        print(f"extra:  {done(ex)} / {len(ex)}")
+    if (HERE / "question_review.csv").exists():
+        _, qs = load("question_review.csv")
+        print(f"question: {done(qs)} / {len(qs)}")
 
 
 if __name__ == "__main__":
@@ -153,9 +164,14 @@ if __name__ == "__main__":
         run("review_ai_suggestions.csv", show_ai=True)
     elif cmd == "hard":
         hard()
+    elif cmd == "extra":
+        run("extra_opinion_review.csv", show_ai=True)
+    elif cmd == "questions":
+        run("question_review.csv", show_ai=True)
     elif cmd == "redo":
         ids = set(sys.argv[2:])
-        for name, show_ai in (("cold_20.csv", False), ("review_ai_suggestions.csv", True)):
+        for name, show_ai in (("cold_20.csv", False), ("review_ai_suggestions.csv", True),
+                              ("extra_opinion_review.csv", True), ("question_review.csv", True)):
             fields, rows = load(name)
             hit = [r for r in rows if r["row_id"] in ids]
             if not hit:

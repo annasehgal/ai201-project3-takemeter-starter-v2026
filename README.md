@@ -43,10 +43,11 @@
      sentences. -->
 
 TakeMeter classifies comments from r/bangtan (https://www.reddit.com/r/bangtan/),
-the main English-language BTS subreddit, into three labels:
+the main English-language BTS subreddit, into four labels:
 - `info`: gives the reader something checkable.
 - `opinion`: takes a side another fan could argue with.
 - `reaction`: expresses the writer's own feelings or experience.
+- `question`: asks other fans for an answer. This was added later as a stretch feature; the first trained model (`results.json`) used only the first three.
 
 I chose r/bangtan because it is public, posts 100+ comments a day, and varies
 widely in substance: a sourced, detailed answer often sits next to a one-word
@@ -110,6 +111,24 @@ examples carry no spoilers. My Milestone 1 reading notes are in
 >
 > (r/bangtan comment [phu1xse](https://www.reddit.com/r/bangtan/comments/1xagki0/_/phu1xse/))
 
+### `question`
+
+Added after the first training run, as stretch feature 3 (see [Stretch Features](#stretch-features)).
+
+**Definition:** The comment's main point is to ask other fans for information, a recommendation, or help the writer doesn't have, so the natural reply is an answer.
+
+**Example 1:**
+> Anyone know when the digital viewing tickets for buenos Aires will come on weverse?
+>
+> (r/bangtan comment [phrewqm](https://www.reddit.com/r/bangtan/comments/1tkbrpt/_/phrewqm/))
+
+**Example 2:**
+> Where can we find a list of the reliable translators?
+>
+> (r/bangtan comment [pgmnoth](https://www.reddit.com/r/bangtan/comments/1x539re/_/pgmnoth/))
+
+**Its hardest boundary, `question` vs `reaction` (Rule 4):** it is `question` only if another fan could answer it with a fact or a recommendation and the writer seems to want that answer. Rhetorical or gushing questions ("What even is that pose JK?") are not requests, so they go through Rule 1 as before. If a comment also makes a claim, label it by its main point: is it there to get an answer?
+
 ### The hardest boundary
 
 **Which two labels:** `reaction` vs `opinion`. The real comment that sits between them is [phv7dt2](https://www.reddit.com/r/bangtan/comments/1xagki0/_/phv7dt2/), posted under Yoongi's Instagram photo dump:
@@ -132,7 +151,7 @@ First strip the feeling, then decide by what is left:
 
 Under this rule phv7dt2 is `opinion`: after "I really adore" is stripped, the second sentence makes a claim about the members' lasting relationship that the photo does not show.
 
-The rules for the other two boundaries, the exclusion list, and the full AI stress test are in [taxonomy_stress_test.md](taxonomy_stress_test.md). The other boundaries are `info` vs `opinion` and `info` vs `reaction`. The exclusion list covers image-only, link-only, question-only, mod, non-English, and off-topic comments.
+The rules for the other two boundaries, the exclusion list, and the full AI stress test are in [taxonomy_stress_test.md](taxonomy_stress_test.md). The other boundaries are `info` vs `opinion` and `info` vs `reaction`. The exclusion list covers image-only, link-only, mod, non-English, and off-topic comments. It used to include question-only comments too; since `question` was added they are labelled `question` instead.
 
 ---
 
@@ -167,7 +186,10 @@ I labelled in the terminal with [labelling/label.py](labelling/label.py), one po
 | `info` | 71 | 22.5% |
 | `opinion` | 56 | 17.7% |
 | `reaction` | 189 | 59.8% |
+| `question` | 0 | 0% |
 | **Total** | 316 | 100% |
+
+`question` has no rows yet: its 57 candidate comments are waiting for my review (see [Stretch Features](#stretch-features)).
 
 The largest label is 59.8%, under the brief's 70% cap and my criterion 3 limit of 60%, and the smallest is 17.7% (criterion 3 needs at least 15%), so criterion 3 is met, narrowly.
 
@@ -208,12 +230,12 @@ All eight hard cases I recorded, with my decisions, are in [labelling/hard_cases
 **Base model:** `distilbert-base-uncased`, fine-tuned for 3-label classification with the notebook's `train_model`.
 
 **Settings:** <!-- epochs, learning rate, batch size, seed -->
-3 epochs, learning rate 2e-5, batch size 16, max length 128 tokens, seed 42 (the notebook defaults). Trained on 316 rows of `labels.csv`.
+3 epochs, learning rate 2e-5, batch size 16, max length 128 tokens, seed 42 (the notebook defaults). Trained on 316 rows of `labels.csv` (commit 32a4243), with the three original labels.
 - **Device:** `mps` (Apple Silicon GPU, Apple M2 Pro), torch 2.14.1, transformers 4.57.6. `results.json` records the device too. Another machine with the same data and seed can give slightly different numbers.
 - **Run time:** about 15 seconds of training.
 - **How it was run:** Claude Code ran the code cells of sections 1-5 in order, unchanged, as a script with this project's `.venv` Python from the repo folder (the `.venv` has no `ipykernel`, so it could not run as a notebook kernel). Sections 6 and 7 were not run.
 
-**Anything I changed from the defaults, and why:** Nothing. Every setting is the default.
+**Anything I changed from the defaults, and why:** Nothing. Every setting is the default. A second run with one setting changed is documented under [Stretch Features](#stretch-features); it does not replace this run.
 
 **Split sizes:** <!-- train / val / test, and per-label counts in the test
 split. If a label had fewer than about 8 in test, say so — it explains a lot
@@ -259,6 +281,66 @@ Stratified 70/15/15 split, seed 42: **train 220, validation 48, test 48.**
 - **The 20 cold rows** were not pre-labelled. I labelled those myself, without AI, before starting the review.
 - **I read every pre-labelled row and gave it my own label** before it entered `labels.csv`: 285 kept, 19 changed, 66 excluded. The `note` column records which, row by row.
 - **Claude Code also** wrote the labelling and build scripts and, after I built the file, flagged labels of mine that looked inconsistent with my rules. It did not change any label.
+- **Stretch features:** Claude Code pre-screened the unused comments for likely `opinion` posts, wrote and ran the second training experiment, and proposed the fourth label. Details and status are under [Stretch Features](#stretch-features).
+
+---
+
+## Stretch Features
+
+I intend to complete all three stretch features. Status as of this commit:
+
+| Feature | Status |
+|---|---|
+| 1. 50 extra examples for the thinnest label (`opinion`) | Collected and AI pre-screened; **waiting for my review**, so not yet in `labels.csv` |
+| 2. Second training run with one hyperparameter changed | **Done** (results below) |
+| 3. A fourth label | **`question` approved and added to the taxonomy, label map and notebook**; its 57 candidate comments are **waiting for my review**, then retraining |
+
+### 1. 50 extra `opinion` examples
+
+- **Why `opinion`:** it is the thinnest label in `labels.csv`, with 56 of 316 rows (17.7%).
+- **Where they came from:** the same Arctic Shift download as the main set (r/bangtan, 13-20 Oct 2026). After the same filters, 989 comments had never been sampled. Claude Code keyword-matched 242 of them (for example "I think", "should", "better", "underrated", "because") and read all 242 against my rules. It proposed **64** as likely `opinion`, 21 of them marked unsure with a reason.
+- **Unlike the main set, these were chosen because they looked like `opinion`.** That is the point of this feature, but it means they are not a random sample of the community.
+- **Files:** [labelling/extra_opinion_review.csv](labelling/extra_opinion_review.csv) (text copied exactly as posted). Each row's comment ID and permalink are in [labelling/sources.csv](labelling/sources.csv), batch `stretch1_opinion_topup`. None duplicates or near-duplicates a row already in the dataset.
+- **Next step (mine):** review every row with `python labelling/label.py extra`, then rebuild with `python labelling/build_labels.py --write`. Rows I don't label stay out. Their note will read `AI-assisted (opinion top-up); human-reviewed, ...`. The counts table above will be updated then.
+
+### 2. Second training run: 6 epochs instead of 3
+
+- **What changed:** `EPOCHS` 3 → 6. Nothing else: same `labels.csv` (316 rows, commit 32a4243), same seed 42, same base model, learning rate 2e-5, batch size 16, max length 128, same device (`mps`, Apple M2 Pro).
+- **Why epochs:** in the first run the validation macro F1 stayed at 0.251 for all three epochs, which is what predicting `reaction` for every post scores, while validation loss was still falling (0.925 → 0.883). That looked like a model that had not trained long enough to move off the majority label, so more passes over the same data was the single change to test.
+- **How it was run:** [run_experiment.py](run_experiment.py) runs the notebook's own section 1-5 cells unchanged, with only the setting override and a different output filename, so `results.json` and `test_split.csv` were not touched. The test split was byte-identical to `test_split.csv` in every run.
+- **Is the change bigger than run-to-run noise?** I first re-ran the default settings the same way ([experiments/results_rerun_default.json](experiments/results_rerun_default.json)). It reproduced `results.json` exactly (same predictions and scores), so on this machine the difference below comes from the setting, not from chance in the run.
+
+| Measure (48 test posts) | Run 1: 3 epochs (`results.json`) | Run 2: 6 epochs ([experiments/results_exp2_epochs6.json](experiments/results_exp2_epochs6.json)) |
+|---|---|---|
+| Accuracy | 0.604 | 0.625 |
+| Macro F1 | 0.251 | 0.310 |
+| F1 `info` (n=11) | 0.000 | 0.167 |
+| F1 `opinion` (n=8) | 0.000 | 0.000 |
+| F1 `reaction` (n=29) | 0.753 | 0.763 |
+| Most-confident third accuracy | 0.812 | 0.812 |
+| Least-confident third accuracy | 0.312 | 0.375 |
+| Final validation loss | 0.883 | 0.805 |
+| Training time | about 14 s | about 26 s |
+
+**What moved:** almost nothing. Run 1 predicted `reaction` for all 48 test posts. Run 2 got exactly one more post right: one `info` post is now predicted `info` instead of `reaction`, and every other prediction is the same. One post out of 48 on a single seed is not evidence that 6 epochs is better. What it does show is that doubling training time does not fix the problem: the model still never predicts `opinion`, so the cause is more likely the data (few `opinion` and `info` examples, and the labelling inconsistencies noted in The Dataset) than the number of epochs.
+
+### 3. A fourth label: `question`
+
+- **What I found:** one kind of comment my three labels had no place for: a fan asking other fans for something. The 2,000 comments downloaded include 44 question-only ones (after the usual thread and mod filters), for example "Where can I find the translations of the ments?". During review I also excluded several longer ones (such as r048, asking for Rio activity and food recommendations), because my v3 rules sent all question-only comments to the exclusion list. They are not `info` (they supply nothing checkable), not `opinion` (no side) and not really `reaction`, and the natural reply to them is an answer.
+- **What I decided:** I approved `question` as the fourth label, with the definition, examples and Rule 4 under [Label Taxonomy](#question). Considered and rejected: a `joke` label, because jokes on r/bangtan are a tone, not a different main point; Rule 1 already sends a joking claim to `opinion` and a joking feeling to `reaction`.
+- **What changed:** `question` is now in `LABELS` in [takemeter.ipynb](takemeter.ipynb) and [labelling/build_labels.py](labelling/build_labels.py), in [label_definitions.txt](label_definitions.txt) (so the baseline sees it), and in the rules in [taxonomy_stress_test.md](taxonomy_stress_test.md). The labelling tool takes `?` for `question`. No existing label was changed.
+- **Data:** [labelling/question_review.csv](labelling/question_review.csv) holds 57 real comments: the 44 question-only comments minus one near-duplicate, plus 14 longer requests from the unused pool. Claude Code suggested `question` for 51 and another label for 6 (for example a rhetorical joke as `reaction`), and marked 19 as unsure. Provenance is in `labelling/sources.csv`, batch `stretch3_question`. Their note will read `AI-assisted (question batch); human-reviewed, ...`.
+- **Rows already in the sheet that my old rule excluded:** r027, r043, r048, r137, r146 and r275 are questions I marked `EXCLUDE` under the v3 rules. They need my label again under Rule 4: `python labelling/label.py redo r027 r043 r048 r137 r146 r275`. That is relabelling because the rule changed, not to move the counts.
+- **Not done yet:** my review of the 57 rows and the 6 redo rows, rebuilding `labels.csv`, and retraining with four labels. Until then `labels.csv` has no `question` rows, and running the notebook prints a warning that `question` never appears.
+- **The stress test was not repeated for `question`.** The 16 synthetic posts in taxonomy_stress_test.md tested the three-label rules only.
+
+### Limitations
+
+- Features 1 and 3 are not finished until I review their rows (64 and 57, plus 6 redo rows); until then the dataset and counts above are unchanged.
+- With four labels, criterion 3 (smallest label at least 15%) will probably be missed: about 50 `question` rows in roughly 470 would be about 11%. criteria.md was filed before training and stays as written, so I will report that honestly rather than change the target.
+- Feature 2 is one seed and one test split of 48 posts. A one-post difference could reverse on another seed.
+- `label_definitions.txt` now has four definitions, but the committed `baseline_results.json` was scored with the original three, on the three-label `test_split.csv`. A fair Unit 6 comparison uses those three-label files together; re-running the baseline now would give it a fourth option the test posts were never labelled with.
+- `results.json` (run 1) was trained on `labels.csv` as of commit 32a4243. If `labels.csv` grows with feature 1, run 1 stays the record of the original dataset.
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
 

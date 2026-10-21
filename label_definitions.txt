@@ -6,3 +6,4 @@
 info: the comment supplies something checkable the reader could use or verify (a fact, a resource, a source, or context about what happened) without taking a side another fan could argue with
 opinion: the comment takes a side another fan could argue with (a judgment about the quality of BTS's work, a comparison, an explanation of why something happened, a reading of what something says about the members, or a prediction), whether or not it cites facts
 reaction: the comment expresses the writer's own feelings, taste, or personal experience about a post, a member, or a moment, without supplying checkable information for the reader or taking a side another fan could argue with
+question: the comment's main point is to ask other fans for information, a recommendation, or help the writer doesn't have, so the natural reply is an answer
