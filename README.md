@@ -42,7 +42,17 @@
 <!-- Your community, and what your classifier sorts posts into. Three or four
      sentences. -->
 
+TakeMeter classifies comments from r/bangtan (https://www.reddit.com/r/bangtan/),
+the main English-language BTS subreddit, into three labels:
+- `info`: gives the reader something checkable.
+- `opinion`: takes a side another fan could argue with.
+- `reaction`: expresses the writer's own feelings or experience.
 
+I chose r/bangtan because it is public, posts 100+ comments a day, and varies
+widely in substance: a sourced, detailed answer often sits next to a one-word
+cheer in the same thread. It is not built around one show or release, so the
+examples carry no spoilers. My Milestone 1 reading notes are in
+[community_notes.md](community_notes.md).
 
 ---
 
@@ -54,35 +64,75 @@
      The decision rule is worth a point on its own and it's the thing most
      people leave out. Every taxonomy has a hardest boundary. Name yours. -->
 
-### `label_one`
+### `info`
 
-**Definition:**
-
-**Example 1:**
->
-
-**Example 2:**
->
-
-### `label_two`
-
-**Definition:**
+**Definition:** The comment supplies something checkable the reader could use or verify (a fact, a resource, a source, or context about what happened) without taking a side another fan could argue with.
 
 **Example 1:**
+> The last photo that most are discussing in this thread is an ARMY at the barricade at one of the concerts, with a sign that says "i wanna be you dimple match". She is smiling and showing off her dimples, which are very similar to Namjoons dimples!
 >
+> (r/bangtan comment [phri391](https://www.reddit.com/r/bangtan/comments/1xa1z82/_/phri391/))
 
 **Example 2:**
+> Welcome! Generally BT21 stuff is easier to come by than BTS stuff. If you have a Miniso by you, they usually have lots of BT21 things. :)
 >
+> (r/bangtan comment [phrzej4](https://www.reddit.com/r/bangtan/comments/1x8bnqb/_/phrzej4/))
+
+### `opinion`
+
+**Definition:** The comment takes a side another fan could argue with (a judgment about the quality of BTS's work, a comparison or ranking, an explanation of why something happened, a reading of what something says about the members, or a prediction), whether or not it cites facts.
+
+**Example 1:**
+> Hands down the documentaries - burn the stage, bring the soul, break the silence, and the latest beyond the star. I prefer the series versions over the films.
+>
+> The Netflix documentary was good too but I liked that the ones produced by bighit had individual interviews and seemed to explore the harder topics rather than just fly on the wall.
+>
+> (r/bangtan comment [phrw4iy](https://www.reddit.com/r/bangtan/comments/1xa5j1v/_/phrw4iy/))
+
+**Example 2:**
+> Translation: I AM WINNING. THEY ARE BECOMING AN INSTRUMENT BAND.
+>
+> (But really, learning new instruments in your 30s takes commitment. BTS really loves BTS.)
+>
+> (r/bangtan comment [phtragd](https://www.reddit.com/r/bangtan/comments/1xagki0/_/phtragd/))
+
+### `reaction`
+
+**Definition:** The comment expresses the writer's own feelings, taste, or personal experience about a post, a member, or a moment, without supplying checkable information for the reader or taking a side another fan could argue with.
+
+**Example 1:**
+> my precious hobii, seeing him smile makes me so happyy
+>
+> (r/bangtan comment [phv3luq](https://www.reddit.com/r/bangtan/comments/1xa2yl2/_/phv3luq/))
+
+**Example 2:**
+> So much beauty it’s overwhelming
+>
+> (r/bangtan comment [phu1xse](https://www.reddit.com/r/bangtan/comments/1xagki0/_/phu1xse/))
 
 ### The hardest boundary
 
-**Which two labels:**
+**Which two labels:** `reaction` vs `opinion`. The real comment that sits between them is [phv7dt2](https://www.reddit.com/r/bangtan/comments/1xagki0/_/phv7dt2/), posted under Yoongi's Instagram photo dump:
+
+> I really adore that he chose a photo of him and Jungkook where Jungkook is being silly and doing Yoongi’s signature dance move. Even when he’s 60, Jungkook will be annoying and Yoongi will be so happy about it
+
+Each label is plausible:
+- *`reaction`:* it opens with "I really adore", and the last line reads as affectionate exaggeration.
+- *`opinion`:* the last line predicts something about the members' relationship that a fan could dispute.
 
 **The decision rule I used every time:**
 <!-- e.g. "If the post names a specific checkable fact, it's `analysis`, even
      if the tone is heated." -->
 
+First strip the feeling, then decide by what is left:
+- **Strip:** emotion words (love, adore, crying), bare praise and superlatives (so pretty, unreal, perfect), feeling idioms ("hits different"), emojis, and fandom set phrases ("boyfriend-coded").
+- **About the writer** ("my favorite", "for me", "I was there"): it's `reaction`.
+- **Only restates what is plainly in the post** ("he's smiling", "he looks like he's enjoying himself"): it's `reaction`.
+- **Adds something about BTS, their work, or the fandom that the post doesn't show:** it's `opinion`, even if joking or exaggerated. That covers why something happened, what it means, a generalization ("he always..."), a specific quality ("dated"), an unmarked comparison or ranking, or a prediction.
 
+Under this rule phv7dt2 is `opinion`: after "I really adore" is stripped, the second sentence makes a claim about the members' lasting relationship that the photo does not show.
+
+The rules for the other two boundaries, the exclusion list, and the full AI stress test are in [taxonomy_stress_test.md](taxonomy_stress_test.md). The other boundaries are `info` vs `opinion` and `info` vs `reaction`. The exclusion list covers image-only, link-only, question-only, mod, and non-English comments.
 
 ---
 
@@ -91,7 +141,7 @@
 <!-- Where you collected from, how you labelled, your counts, and three hard
      cases. -->
 
-**Where the posts came from:**
+**Where the posts came from:** r/bangtan comments, read through the Arctic Shift public Reddit archive (https://arctic-shift.photon-reddit.com) because reddit.com is blocked from my working environment. Collection (Milestone 4) has not started yet.
 
 **How I labelled them:** <!-- Cold first? Pre-labelled with AI and corrected?
 Say so plainly — the disclosure is required, not penalised. -->
@@ -100,9 +150,9 @@ Say so plainly — the disclosure is required, not penalised. -->
 
 | Label | Count | Share |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| `info` |  |  |
+| `opinion` |  |  |
+| `reaction` |  |  |
 | **Total** |  | 100% |
 
 **Three hard cases**
@@ -162,17 +212,17 @@ of next unit's variance. -->
 
 **Moment 1**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* Using Claude Code, I gave an AI agent my three label definitions without the decision rules, and asked for eight synthetic comments that sit on the label boundaries, without saying which label was correct.
+- *What came back:* Eight realistic fan comments. Three of them I could not classify cleanly: two used a fact to win an argument, and one rested on the set phrase "the most yoongi thing he has ever said".
+- *What I changed:* I changed the `info` definition to exclude taking a side. I added bare praise and set phrases to the strip list in the decision rule. I added rules for the two other boundaries. A second round, aimed at breaking the revised rules, led to five more clarifications. A blind re-label of all 16 posts under the final rules agreed with mine 16/16. Details are in [taxonomy_stress_test.md](taxonomy_stress_test.md).
 
 **Moment 2**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* For the borderline comment phv7dt2, the brief's prompt: make the strongest case for each of the two labels, without saying which is right or rewriting my definitions.
+- *What came back:* A strong case for both labels. The best argument for `reaction` was that "when he's 60" is affectionate exaggeration, not a real forecast.
+- *What I changed:* I made the decision rule settle that case explicitly. Exaggeration does not cancel a claim; what matters is whether what is left says something about the members that the post does not show.
 
-**Pre-labelling disclosure:**
+**Pre-labelling disclosure:** No posts have been labelled yet. Claude Code (an AI agent) did most of the Milestone 1 and 2 work: it pulled the comments, drafted the reading notes, proposed the labels and rules, and ran the stress test. I reviewed the results.
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
 
