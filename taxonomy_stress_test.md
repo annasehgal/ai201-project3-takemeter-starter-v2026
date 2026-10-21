@@ -13,7 +13,8 @@ This page holds the complete final rules, how they were tested, and what changed
 
 **Not labelled at all:** comments that are only an image, GIF or link, only a
 question or request with no claim or information in it, mod or AutoModerator
-messages, or not in English. If a question *also* contains a claim or a fact,
+messages, not in English, or not about BTS or the fandom at all (for
+example, comments in the sub's off-topic book club). If a question *also* contains a claim or a fact,
 it's labelled by that content.
 
 Apply the rules in order. Use the tie-breaker only if the rules don't decide.

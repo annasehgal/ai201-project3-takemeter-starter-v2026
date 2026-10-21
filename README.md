@@ -132,7 +132,7 @@ First strip the feeling, then decide by what is left:
 
 Under this rule phv7dt2 is `opinion`: after "I really adore" is stripped, the second sentence makes a claim about the members' lasting relationship that the photo does not show.
 
-The rules for the other two boundaries, the exclusion list, and the full AI stress test are in [taxonomy_stress_test.md](taxonomy_stress_test.md). The other boundaries are `info` vs `opinion` and `info` vs `reaction`. The exclusion list covers image-only, link-only, question-only, mod, and non-English comments.
+The rules for the other two boundaries, the exclusion list, and the full AI stress test are in [taxonomy_stress_test.md](taxonomy_stress_test.md). The other boundaries are `info` vs `opinion` and `info` vs `reaction`. The exclusion list covers image-only, link-only, question-only, mod, non-English, and off-topic comments.
 
 ---
 
@@ -141,7 +141,16 @@ The rules for the other two boundaries, the exclusion list, and the full AI stre
 <!-- Where you collected from, how you labelled, your counts, and three hard
      cases. -->
 
-**Where the posts came from:** r/bangtan comments, read through the Arctic Shift public Reddit archive (https://arctic-shift.photon-reddit.com) because reddit.com is blocked from my working environment. Collection (Milestone 4) has not started yet.
+**Where the posts came from:** These are public r/bangtan comments, copied exactly as posted. Reddit blocks access from my working environment, so they were pulled through the Arctic Shift public Reddit archive (https://arctic-shift.photon-reddit.com). Every row's Reddit comment ID and permalink are in [labelling/sources.csv](labelling/sources.csv), and the ID is also in each row's `note`.
+
+How the pool was built:
+- **Download:** the 2,000 most recent comments, posted 13-20 Oct 2026.
+- **Automatic filter:** removed comments that were deleted, from bots or mods, image/GIF/link-only (under 4 words outside links), non-English, question-only, over 220 words, or an exact or near-duplicate of another kept comment.
+- **Thread exclusions:** dropped marketplace (buy/sell) threads, and off-topic threads that aren't about BTS or the fandom (the book club, the weekly off-topic room, a "letters to your younger self" project). That left 1,379 comments.
+- **First sample:** 280 at random (seed 201), at most 8 per thread so photo-dump threads can't dominate.
+- **Top-up:** the first sample leaned heavily `reaction`, so I added 110 more (seed 202), drawn only from discussion, question, info, milestone, news, live-translation, weekly-room and tour-megathread threads. They were chosen by thread type, not by label.
+
+That makes 390 candidate comments from 70 threads.
 
 **How I labelled them:** <!-- Cold first? Pre-labelled with AI and corrected?
 Say so plainly — the disclosure is required, not penalised. -->
@@ -222,7 +231,11 @@ of next unit's variance. -->
 - *What came back:* A strong case for both labels. The best argument for `reaction` was that "when he's 60" is affectionate exaggeration, not a real forecast.
 - *What I changed:* I made the decision rule settle that case explicitly. Exaggeration does not cancel a claim; what matters is whether what is left says something about the members that the post does not show.
 
-**Pre-labelling disclosure:** No posts have been labelled yet. Claude Code (an AI agent) did most of the Milestone 1 and 2 work: it pulled the comments, drafted the reading notes, proposed the labels and rules, and ran the stress test. I reviewed the results.
+**Pre-labelling disclosure:** Claude Code (an AI agent) did most of the Milestone 1-4 setup work:
+- **Milestones 1 and 2:** it pulled the comments, drafted the reading notes, proposed the labels and rules, and ran the stress test. I reviewed the results.
+- **Milestone 4:** it collected the 390 candidate comments and pre-labelled 370 of them, marking 77 as unsure with a reason. Those pre-labels are in [labelling/review_ai_suggestions.csv](labelling/review_ai_suggestions.csv).
+- **The 20 cold rows** were not pre-labelled. I label those myself, without AI.
+- **Every pre-labelled row has to be read and given my own label** before it can enter `labels.csv`. The `note` column records, for each row, whether I kept or changed the AI label.
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
 
