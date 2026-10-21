@@ -55,11 +55,11 @@ whether you hit them:
 
 <!-- Your criterion. It must name a number. -->
 
-
+Overall accuracy on the held-out test split (the 15% the notebook holds out; `accuracy` in the results file) is **at least 0.75** on each of seeds 42, 7 and 2024.
 
 **Why this target:**
 
-
+In my Milestone 1 reading, `reaction` was over half of all comments, so a model that always guesses `reaction` would score about 0.50. 0.75 means getting roughly 23 of about 30 test posts right on every seed, which halves that guess's error rate. That's the point where I'd trust TakeMeter to sort a thread for me.
 
 ---
 
@@ -67,11 +67,11 @@ whether you hit them:
 
 <!-- Your criterion. -->
 
-
+Every label (`info`, `opinion` and `reaction`) has an F1 of **at least 0.55** on the held-out test split (`per_label.<label>.f1`), on each of seeds 42, 7 and 2024.
 
 **Why this target:**
 
-
+TakeMeter is only useful if it pulls `info` and `opinion` out of the flood of `reaction`, so I hold every label to the same bar instead of letting the big one carry the average. I set it at 0.55 rather than higher because `info` may have only about 6 test posts. `opinion` also sits on my hardest boundary (`reaction` vs `opinion`).
 
 ---
 
@@ -79,11 +79,11 @@ whether you hit them:
 
 <!-- Your criterion. -->
 
-
+In the final `labels.csv` (at least 200 rows), **no label is more than 60%** of the rows and **no label is less than 15%**, checked before training with `df["label"].value_counts(normalize=True)` on the file the notebook loads in section 2.
 
 **Why this target:**
 
-
+The brief's 70% cap would be easy to meet, so I set mine tighter. `reaction` was over half of what I read in photo-dump threads, which means staying under 60% will take deliberate collection from discussion, help and recommendation threads. The 15% floor guarantees at least 30 examples of each label, so even `info`, my likely smallest, gets about 4 or 5 posts in the test split.
 
 ---
 
@@ -91,11 +91,11 @@ whether you hit them:
 
 <!-- Your criterion. -->
 
-
+On the held-out test split, accuracy on the model's most-confident third of predictions is **at least 0.30 higher** than accuracy on its least-confident third (`accuracy_most_confident_third` minus `accuracy_least_confident_third` in the results file), on each of seeds 42, 7 and 2024.
 
 **Why this target:**
 
-
+I want the confidence score to be usable for flagging unsure comments (most likely the `reaction`/`opinion` borderline ones) for a human to check. Each third is only about 10 posts, so a gap of 0.30 means about 3 more correct out of 10. Anything smaller could come from one or two lucky posts.
 
 ---
 
@@ -103,11 +103,11 @@ whether you hit them:
 
 <!-- Your criterion. -->
 
-
+At least 7 days after finishing `labels.csv`, I re-label 30 rows drawn at random (`df.sample(30, random_state=5)`) using only the definitions and rules in my README, without looking at the original labels. I compare them by matching the `text` column. My new labels must match the originals on **at least 85%** (26 of 30). This measures my own consistency, not agreement between two annotators, because no second person labels my posts.
 
 **Why this target:**
 
-
+I have three labels and a written rule for every boundary, so a careful annotator should rarely change their mind. The 16/16 blind check in my stress test was an AI labelling synthetic posts, though, not me labelling real ones. 85% allows 4 changes out of 30, which is about what I expect at the `reaction`/`opinion` boundary.
 
 ---
 
