@@ -7,6 +7,7 @@ every row, so you can quit (q) and come back later; it resumes where you left of
     python labelling/label.py cold      # step 1: the 20 cold rows, text only
     python labelling/label.py review    # step 2: the 370 AI-suggested rows
     python labelling/label.py hard      # step 3: your decisions on the hard cases
+    python labelling/label.py redo r014 r065   # clear those rows and label them again
 
 Keys (type the letter, then Enter):
     i = info    o = opinion    r = reaction    x = EXCLUDE
@@ -152,5 +153,17 @@ if __name__ == "__main__":
         run("review_ai_suggestions.csv", show_ai=True)
     elif cmd == "hard":
         hard()
+    elif cmd == "redo":
+        ids = set(sys.argv[2:])
+        for name, show_ai in (("cold_20.csv", False), ("review_ai_suggestions.csv", True)):
+            fields, rows = load(name)
+            hit = [r for r in rows if r["row_id"] in ids]
+            if not hit:
+                continue
+            for r in hit:
+                r["your_label"] = ""
+            save(name, fields, rows)
+            print(f"\nRelabelling {len(hit)} rows in {name}")
+            run(name, show_ai)
     else:
         status()
