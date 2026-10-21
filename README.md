@@ -248,6 +248,7 @@ All eight hard cases I recorded, with my decisions, are in [labelling/hard_cases
 - **Device:** `mps` (Apple Silicon GPU, Apple M2 Pro), torch 2.14.1, transformers 4.57.6. `results.json` records the device too. Another machine with the same data and seed can give slightly different numbers.
 - **Run time:** about 15 seconds of training.
 - **How it was run:** Claude Code ran the code cells of sections 1-5 in order, unchanged, as a script with this project's `.venv` Python from the repo folder (the `.venv` has no `ipykernel`, so it could not run as a notebook kernel). Sections 6 and 7 were not run.
+- **Notebook outputs:** later, `ipykernel` was added to the `.venv` and `takemeter.ipynb` itself was run with that kernel, so sections 1-5 now show their outputs in the notebook. That run used the current `labels.csv` (438 rows, four labels), so its section 5 numbers (accuracy 0.500, macro F1 0.271) are the four-label run under [Stretch Features](#stretch-features) and match [experiments/results_4labels.json](experiments/results_4labels.json). Section 5 rewrote `results.json` and `test_split.csv`, and both were put back to the committed originals, which stay the record of this run. Sections 6 and 7 are next unit's and have no outputs.
 
 **Anything I changed from the defaults, and why:** Nothing. Every setting is the default. A second run with one setting changed is documented under [Stretch Features](#stretch-features); it does not replace this run.
 
