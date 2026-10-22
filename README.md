@@ -302,6 +302,7 @@ Stratified 70/15/15 split, seed 42: **train 220, validation 48, test 48.**
 - **Staff labels:** I labelled the 30 staff posts myself before opening the staff file.
 - **Write-up:** Claude Code drafted most of the Unit 6 sections from the result files, including the prediction sentence (marked as written after the baseline ran). I committed each milestone myself.
 - **Error patterns:** it helped me see two patterns. The trained model uses `reaction` as a catch-all in every matrix. And most of my review changes were `reaction` to `info`, which is why I diagnosed the `info`/`reaction` boundary as a labelling problem. It also caught one claim of its own that the data didn't support (that many `question` rows read like reactions; only 4 of 51 do), and it was corrected.
+- **Unit 6 stretch:** Claude Code ran the confidence check and the 6-epoch run. It also did the first sort of the 28 `info` posts the model got wrong into the groups in the `info` write-up. The groups are judgments against my rules, and each post's group is in `experiments/info_error_review.csv` so it can be checked.
 
 ---
 
@@ -672,6 +673,112 @@ Yes, partly. Raising the learning rate improved accuracy and macro F1 on all thr
 
 ---
 
+## Unit 6 Stretch Features
+
+Declared on 21 Oct 2026, before starting any of them. I'm adding all three:
+
+1. **Confidence check:** on the after model, are confident predictions right more often than unsure ones, on each seed and for each predicted label?
+2. **Second improvement:** epochs 3 → 6, kept on top of the Milestone 5 learning rate (5e-5), on the same three seeds. It's a training setting only, so labels, taxonomy and criteria stay as they are. It will be written to a separate file so the Milestone 5 after-run isn't overwritten.
+3. **Per-label error write-up for `info`:** it's the worst label in every matrix (F1 0.000 on all seeds, before and after). I'll read the real `info` posts the after model got wrong and sort out why.
+
+All three use the same three seeds and the same 66-post test splits as the run logs. I didn't change any labels, rules or criteria.
+
+**How they were run:**
+- I re-ran the Milestone 5 after-model (lr 5e-5, 3 epochs) to save each post's prediction and confidence. The results file doesn't store those. The re-run matched [results_three_seeds_after.json](results_three_seeds_after.json) exactly on all three seeds.
+- I checked that `results.json`, `test_split.csv` and both three-seed files were unchanged afterwards.
+- **Files:**
+  - [experiments/predictions_after_lr5e-5.json](experiments/predictions_after_lr5e-5.json)
+  - [experiments/predictions_after_epochs6.json](experiments/predictions_after_epochs6.json)
+  - [experiments/results_three_seeds_after_epochs6.json](experiments/results_three_seeds_after_epochs6.json)
+  - [experiments/info_error_review.csv](experiments/info_error_review.csv)
+
+### 1. Confidence check
+
+For the Milestone 5 after-model, yes. Its confidence means something: across all 198 test predictions (66 × 3 seeds), accuracy rises steadily with confidence.
+
+| Confidence | Posts | Accuracy |
+|---|---|---|
+| under 0.5 | 63 | 0.333 |
+| 0.5 to 0.6 | 42 | 0.619 |
+| 0.6 to 0.7 | 43 | 0.744 |
+| 0.7 to 0.8 | 49 | 0.776 |
+| 0.8 and up | 1 | 0.000 |
+
+On every seed it is more confident when it's right than when it's wrong: 0.602 vs 0.513, 0.630 vs 0.548, and 0.635 vs 0.507. By predicted label:
+- **`opinion`:** right 59% of the time, mean confidence 0.635 when right vs 0.506 when wrong.
+- **`reaction`:** right 57% of the time, 0.634 vs 0.539.
+- **`question`:** right 73% of the time, but with low confidence even when right (0.505).
+
+So a confidence cut-off of about 0.5 would be a fair way to flag posts for a human to check, which is what criterion 4 was for.
+
+The 6-epoch model (stretch 2) is different. It's much more confident overall: 112 of 198 predictions are above 0.8, and those are right 78.6% of the time. Below 0.8, though, accuracy is flat at 0.50 to 0.56 whatever the confidence. So training longer made the model more accurate, but its confidence became less useful for telling sure guesses from unsure ones. That shows up in criterion 4 below.
+
+### 2. Second improvement: epochs 3 → 6 (on top of lr 5e-5)
+
+- **Why:** after the learning rate change, validation loss was still falling at epoch 3 on every seed (for example 1.013 → 0.987 on seed 42 between epochs 2 and 3).
+- **What changed:** only `EPOCHS` (3 → 6), passed as an override. The notebook still says 3, so the Milestone 5 setup stays as committed.
+
+**Run Log after the second improvement**
+
+| Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
+|---|---|---|---|---|---|
+| 1. Overall accuracy | ≥ 0.75 on every seed | 0.712 | 0.636 | 0.697 | **MISSED** |
+| 2. Every label's F1 | ≥ 0.55 on every seed | min 0.552 (`opinion`) | min 0.235 (`info`) | min 0.400 (`info`) | **MISSED** (only `info` fails; `opinion`, `reaction` and `question` clear 0.55 on every seed) |
+| 3. Label balance in `labels.csv` | largest ≤ 60%, smallest ≥ 15% | `question` 11.6% | same file | same file | **MISSED** (data unchanged) |
+| 4. Confidence gap | ≥ 0.30 on every seed | 0.818 − 0.591 = **0.227** | 0.682 − 0.455 = **0.227** | 0.864 − 0.500 = **0.364** | **MISSED** (was MET after Milestone 5) |
+| 5. Self re-label agreement | ≥ 85% (26/30) | n/a | n/a | n/a | **Not tested** |
+
+| Measure | Seed 42 | Seed 7 | Seed 2024 |
+|---|---|---|---|
+| Accuracy (lr 5e-5, 3 ep → 6 ep) | 0.621 → **0.712** | 0.591 → **0.636** | 0.561 → **0.697** |
+| Macro F1 | 0.517 → **0.678** | 0.470 → **0.602** | 0.318 → **0.692** |
+| F1 `info` | 0.000 → **0.588** | 0.000 → **0.235** | 0.000 → **0.400** |
+| F1 `opinion` | 0.529 → **0.552** | 0.650 → **0.684** | 0.588 → **0.706** |
+| F1 `reaction` | 0.714 → **0.794** | 0.657 → **0.667** | 0.684 → **0.721** |
+| F1 `question` | 0.824 → 0.778 | 0.571 → **0.824** | 0.000 → **0.941** |
+
+Confusion matrix, seed 42, 6 epochs:
+
+| true \ predicted | info | opinion | reaction | question |
+|---|---|---|---|---|
+| **info** | 5 | 2 | 4 | 0 |
+| **opinion** | 1 | 8 | 7 | 2 |
+| **reaction** | 0 | 1 | 27 | 1 |
+| **question** | 0 | 0 | 1 | 7 |
+
+**Did it help?** Yes, on everything except confidence.
+- **What improved:**
+  - Accuracy and macro F1 went up on every seed, and the gains (4.5 to 13.6 points of accuracy) are bigger than the 6-point spread between seeds.
+  - `info` is predicted for the first time in any run: 6, 6 and 9 times.
+  - Seed 2024, which never learned `question` at 3 epochs, now gets 8 of 8.
+  - On the seed-42 posts it now clearly beats the bare-names baseline (0.712 vs 0.561 accuracy, 0.678 vs 0.514 macro F1). The Milestone 5 model only tied it on macro F1.
+- **What got worse:** criterion 4 went from MET back to MISSED, because the model became more confident across the board (see the confidence check).
+- **Overfitting:** validation loss bottomed out at epoch 3 or 4 and then rose (seed 42: 0.909 → 0.939 → 0.971 → 0.991), so 6 epochs is already slightly past the best point.
+- **What I can't claim:** this is a second change stacked on the first, so I can't say 6 epochs would help at the default learning rate. Stretch feature 2 from Unit 5 (3 → 6 epochs at 2e-5, three labels) barely moved anything.
+
+### 3. Per-label error write-up: `info`
+
+`info` was the worst label in every matrix: 0 correct on every seed in both the before and after runs. The Milestone 5 after-model got all 33 `info` test posts wrong across the three seeds, which is 28 different posts because some appear in more than one split. I read all 28 against my own rules from Label Taxonomy. The full list, with predictions from both models, is in [experiments/info_error_review.csv](experiments/info_error_review.csv).
+
+| What the post actually is | Posts | What the model said |
+|---|---|---|
+| By my own rules it's `reaction`: feeling, taste or experience, nothing checkable ("I am a jinkook heart!", "still addicted to this", "idk why but this vlog made me tear up 😭", "That's my bias too!") | 8 | `reaction`, all 8 |
+| By my own rules it's `opinion`: it explains why something happened, speculates, or recommends ("i think it's because YouTube views and streams no longer count toward U.S. Billboard charts") | 3 | `opinion`, all 3 |
+| Real info mixed with feeling or personal plans (the "12 AM KST bighitphobia" memory, the ticket-to-membership email) | 3 | `reaction` |
+| Clean info in an advice or recommendation tone ("Sometimes I get BT21 merch… from Amazon or Target", "Army Time is the break after the Idol walk…") | 6 | `opinion` |
+| Clean info that is short or mostly a link, quote or photo description (the Samsung Instagram post, "Central Restaurante in Lima, Peru…", my own README example phri391) | 5 | `reaction` |
+| Borderline `info` (a hedged answer, advice phrased as a question, fandom history) | 3 | 2 `reaction`, 1 `question` |
+
+**What this shows:**
+- **Mislabels:** 11 of the 28 (39%) are on the wrong side of my own written rules, and in all 11 the model's "wrong" answer is the label my rules would give.
+- **Where they came from:** 4 of the 8 `reaction`-like ones are cold rows I labelled with no AI help. The other 4 are rows where I changed the AI's `reaction` suggestion to `info` during review.
+- **What it confirms:** my Milestone 4 diagnosis. Part of the `info` problem is my labelling of the `info`/`reaction` boundary, and the review changes I made toward `info` were often wrong by my own rules.
+- **The rest is a real model weakness:** the other 17 are real or borderline `info`. Those show what the model hadn't learned at 3 epochs, that a fact can come in a recommendation's voice (sent to `opinion`) or as a bare link or one-line description (sent to `reaction`).
+- **At 6 epochs:** the model gets 10 of the 28 right. Nine of those are real `info` posts. One is a cold `reaction`-like row ("I saw a BTS edit somewhere…"). The other 7 `reaction`-like rows are still called `reaction`.
+- **What I'd do next:** fixing the 11 mislabelled rows is the obvious next step. It would change labels, so it's outside what this unit allows.
+
+---
+
 ## What's Still Broken
 
 After the learning rate change, criteria 1, 2 and 3 are still missed, criterion 4 is met, and criterion 5 hasn't been tested.
@@ -685,6 +792,8 @@ After the learning rate change, criteria 1, 2 and 3 are still missed, criterion 
 **Criterion 4 (confidence gap ≥ 0.30)** is met after the fix (0.409, 0.364, 0.591). Seed 7 is the closest to the line, so I wouldn't call it safe.
 
 **Criterion 5 (re-label 26 of 30 the same way).** Not tested. My criterion says to wait at least 7 days after finishing `labels.csv` (20 Oct), and the deadline is 25 Oct. I'd run it on 27 Oct or later and add the result to Verdicts without changing the target.
+
+The second improvement in [Unit 6 Stretch Features](#unit-6-stretch-features) (6 epochs on top of lr 5e-5) changes the picture a little. Accuracy reaches 0.636 to 0.712, but criterion 1 is still missed. `info` gets off zero (0.588, 0.235, 0.400), but criterion 2 still fails on `info` alone. Criterion 4 goes back to missed because the model gets overconfident. The `info` write-up there found that 11 of the 28 `info` test posts are mislabelled by my own rules, which is more evidence that relabelling is the next fix.
 
 The higher learning rate also isn't reliable yet. On seed 2024 it barely moved anything, and validation macro F1 dropped between epochs 2 and 3. I'd want more than three seeds before trusting 5e-5 as the setting.
 
