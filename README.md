@@ -454,7 +454,7 @@ The definitions still work as written rules for a human labeller. But this resul
 | 2. Every label's F1 | ≥ 0.55 on every seed | min 0.000 (`info`, `question`) | min 0.000 (`info`, `question`) | min 0.000 (`info`, `question`) | **Missed** |
 | 3. Label balance in `labels.csv` | largest ≤ 60%, smallest ≥ 15% | `reaction` 43.8%, `question` 11.6% | same file | same file | **Missed** (`question` < 15%) |
 | 4. Confidence gap (most-sure third − least-sure third) | ≥ 0.30 on every seed | 0.682 − 0.227 = **0.455** | 0.727 − 0.455 = **0.273** | 0.818 − 0.318 = **0.500** | **Missed** (seed 7) |
-| 5. Self re-label agreement (30 rows, `random_state=5`) | ≥ 85% (26/30) | n/a | n/a | n/a | **Not yet measured** |
+| 5. Self re-label agreement (30 rows, `random_state=5`) | ≥ 85% (26/30) | n/a | n/a | n/a | **Not tested** (not valid before 27 Oct) |
 
 Criterion 3 is a property of the data file, so it is the same on every seed. Criterion 5 is my own blind re-label and doesn't depend on a seed.
 
@@ -501,24 +501,62 @@ The same lean shows up on every seed: 8 and 11 `opinion` posts were sent to `rea
 
 | # | Criterion | Target | Verdict | How I decided |
 |---|---|---|---|---|
-| 1 |  |  |  |  |
-| 2 |  |  |  |  |
-| 3 |  |  |  |  |
-| 4 |  |  |  |  |
-| 5 |  |  |  |  |
+| 1 | Overall accuracy on the held-out split | ≥ 0.75 on seeds 42, 7 and 2024 | **MISSED** | 0.500, 0.561, 0.545. All three are below 0.75, and the best is 19 points short, far more than the 6-point spread between seeds. |
+| 2 | Every label's F1 | ≥ 0.55 on every seed | **MISSED** | `info` and `question` are 0.000 on all three seeds. `opinion` reaches 0.55 only on seed 7 (0.452, 0.625, 0.519). Only `reaction` clears it everywhere (0.634, 0.667, 0.674). |
+| 3 | Label balance in `labels.csv` | largest ≤ 60%, smallest ≥ 15% | **MISSED** | `value_counts(normalize=True)` on the 438-row file: `reaction` 43.8%, `opinion` 27.9%, `info` 16.7%, `question` 11.6%. The cap holds; the floor fails on `question`. |
+| 4 | Confidence gap (most-sure third − least-sure third) | ≥ 0.30 on every seed | **MISSED** | 0.455, **0.273**, 0.500. Two of three seeds clear it and the average (0.409) does, but my criterion says every seed, and seed 7 is 0.027 short. |
+| 5 | Self re-label agreement on 30 random rows | ≥ 85% (26/30) | **NOT TESTED** | My criterion requires waiting at least 7 days after finishing `labels.csv`. I finished it on 20 Oct 2026, so the earliest valid date is 27 Oct, two days after this unit's deadline. Running it sooner would break the rule I set, so I have no verdict. |
 
 **Diagnoses**
 
-<!-- For each miss: the cause, and how you know. The four common causes are:
-     too few examples for a label, a boundary you applied inconsistently, a
-     genuinely hard label pair, and a task the model can't reach from this
-     much data.
+The evidence I use below:
+- **Training data:** the training split is identical on every seed, because the split is stratified: 134 `reaction`, 86 `opinion`, 51 `info`, 35 `question`.
+- **The confusion matrices** in the run log above.
+- **The baseline** (Baseline vs. Trained).
+- **The agreement report:** 30/30 with staff, including 7 posts staff marked as borderline.
+- **My labelling notes** in The Dataset.
 
-     ⚠️ Use your agreement report as evidence. It is the only instrument you
-     have that can tell a LABELLING problem from a MODEL problem, and this
-     section is graded on whether you used it that way. -->
+**Criterion 1 (accuracy) is missed because the model mostly predicts `reaction`.**
+- **What the model does:** across the three seeds it predicts `reaction` 53, 52 and 57 times out of 66, and never predicts `info` or `question`. Accuracy is close to the 44% you'd get by always guessing `reaction`, plus whatever `opinion` posts it catches.
+- **Cause:** this is a task the model doesn't reach from this much data with these settings. Validation loss was still falling at epoch 3 on every seed (for example 1.227 → 1.171 → 1.146 on seed 42), and validation macro F1 ended between 0.27 and 0.34. So training stopped before it had learned anything beyond the majority label and the clearest `opinion` posts.
+- **Why more epochs alone won't fix it:** the 6-epoch run in Stretch 2 moved one post out of 48. So it's not only training time.
+- **What isn't the cause:** this miss isn't explained by my labelling being inconsistent. Criterion 2 below covers where labelling does play a part.
 
+**Criterion 2 (every label's F1) is missed on three labels, for different reasons.**
+- **`question` (F1 0.000, all 8 test posts called `reaction` on every seed): too few examples.**
+  - It has only 35 training examples, the fewest of any label. All 57 `question` rows came from one late stretch batch where I kept every AI suggestion.
+  - A few are wrapped in feeling: 4 of 51 contain words like "omg", "love" or 😭. One example is "Omg the girl with the dimple is sooo cutee!! 🥹✨ I'm curious where do they find these pictures of fans?", which reads like `reaction` until the question at the end. Most aren't, so the main cause here is still the low count.
+  - The agreement check can't speak to this label, because the staff taxonomy has no question category.
+- **`info` (F1 0.000, 8–9 of 11 test posts called `reaction` on every seed): too few examples, plus a boundary I applied inconsistently.**
+  - It has only 51 training examples. Run 1 had 71 `info` rows and also never predicted it, so the count alone isn't the whole story.
+  - My labelling log points at the `info`/`reaction` boundary. Of the 19 pre-labels I changed during review, 16 became `info`, and 15 of those went from `reaction` to `info`.
+  - Claude also flagged rows like "idk why but this vlog made me tear up" as `info` that my own rules would call `reaction`.
+  - So the AI pre-labeller and I disagreed most on this boundary, and some rows on the wrong side of my own rule are still in the training data.
+- **`opinion` (0.452 / 0.625 / 0.519, mostly missed into `reaction`): a genuinely hard pair, not loose labelling.**
+  - The matrix sends 11, 8 and 11 of the 18 real `opinion` posts to `reaction`, and only 0–3 go the other way.
+  - Precision is decent (0.54, 0.71, 0.78) but recall is low (0.39, 0.56, 0.39). When the model does say `opinion` it is usually right. It just won't say it unless a post is clearly argumentative.
+  - The agreement report is the evidence that this isn't my labelling. Staff Rule 2 (claim about the world vs. report of the writer) is the same cut as my `opinion`/`reaction` rule. I matched staff on both borderline posts that hinge on it (sp_019 `hot_take`, sp_029 `reaction`) and on every other post.
+  - So when I apply that kind of rule myself, I apply it the way it's written.
+  - What makes the pair hard is my own decision rule. It asks the reader to strip the feeling out before judging, and the model can't do that: most `opinion` posts in my data are wrapped in fan affection.
+  - The baseline backs this up. Even zero-shot with bare names, `opinion` was its weakest label (F1 0.400).
+  - **Caveat:** the agreement check tested me labelling 30 posts by myself. Most of my training rows are AI pre-labels I kept, so it can't rule out inconsistency in those.
 
+**Criterion 3 (balance) is missed because `question` was added late with too few rows.**
+- `question` is 51 of 438 rows (11.6%). It was a Stretch 3 addition: I collected 57 candidates aimed at that label and kept 51 after review.
+- The criterion was written for three labels, and the three-label file from run 1 passed it: `reaction` 59.8%, `info` 22.5%, `opinion` 17.7%.
+- Adding a fourth label without collecting at least 66 rows of it (15% of 438) is what broke the floor.
+- I'm not revising this criterion. It was measurable and I missed it.
+
+**Criterion 4 (confidence gap) is missed on one seed, by less than one post.**
+- Each third is 22 posts, so seed 7's 0.273 vs. the 0.30 target is a difference of about 0.6 of a post. That is inside the noise I warned about when I set the target.
+- The model's confidence is mostly a measure of how `reaction`-like a post looks. That is useful for flagging, because the least-confident third is where its wrong guesses on `opinion` and `info` collect.
+- The cause of the miss is the same as criterion 1: the model can't tell four labels apart, so on some splits its confident `reaction` guesses include mislabelled `info` and `question` posts.
+- **The case for MET:** two of three seeds and the average clear 0.30. But the target says every seed, and seed 7 doesn't, so I'm keeping the miss.
+
+**Criterion 5 has no verdict because it hasn't been run.**
+- It isn't a miss: the test isn't valid until 27 Oct.
+- The closest evidence I have is the 30/30 staff agreement. That checks whether I can apply a written rule, not whether I'd re-label my own posts the same way a week later, so I'm not counting it as a substitute.
+- If I run it on or after 27 Oct, I'll add the result here without changing the criterion.
 
 ---
 
