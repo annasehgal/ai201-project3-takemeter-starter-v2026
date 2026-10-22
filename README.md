@@ -182,8 +182,6 @@ I labelled in the terminal with [labelling/label.py](labelling/label.py), one po
 
 **Counts per label:**
 
-| Label | Count | Share |
-|---|---|---|
 Current `labels.csv`, after the stretch features:
 
 | Label | Count | Share |
@@ -298,6 +296,13 @@ Stratified 70/15/15 split, seed 42: **train 220, validation 48, test 48.**
 - **Claude Code also** wrote the labelling and build scripts and, after I built the file, flagged labels of mine that looked inconsistent with my rules. It did not change any label.
 - **Stretch features:** Claude Code pre-screened the unused comments for likely `opinion` posts, wrote and ran the second training experiment, and proposed the fourth label. Details and status are under [Stretch Features](#stretch-features).
 
+**Unit 6:**
+- **Runs:** Claude Code ran the baseline (with definitions, with bare names, and on the four-label posts), the two three-seed runs, `agreement.py` and `test.py`. It ran notebook sections 1-3, 6 and 7 as a script so `results.json` and `test_split.csv` wouldn't be overwritten.
+- **Decisions that were mine:** I chose to run the three seeds on the four-label data and chose the learning rate change out of the options it gave me (higher learning rate, more epochs, or relabelling `info`/`reaction`).
+- **Staff labels:** I labelled the 30 staff posts myself before opening the staff file.
+- **Write-up:** Claude Code drafted most of the Unit 6 sections from the result files, including the prediction sentence (marked as written after the baseline ran). I committed each milestone myself.
+- **Error patterns:** it helped me see two patterns. The trained model uses `reaction` as a catch-all in every matrix. And most of my review changes were `reaction` to `info`, which is why I diagnosed the `info`/`reaction` boundary as a labelling problem. It also caught one claim of its own that the data didn't support (that many `question` rows read like reactions; only 4 of 51 do), and it was corrected.
+
 ---
 
 ## Stretch Features
@@ -397,9 +402,9 @@ Both models were scored on the same 48 posts in [test_split.csv](test_split.csv)
 |---|---|---|---|
 | Overall accuracy | 0.208 | 0.604 | +0.396 |
 | Macro F1 | 0.205 | 0.251 | +0.046 |
-| F1 — `info` | 0.303 | 0.000 | -0.303 |
-| F1 — `opinion` | 0.312 | 0.000 | -0.312 |
-| F1 — `reaction` | 0.000 | 0.753 | +0.753 |
+| F1 `info` | 0.303 | 0.000 | -0.303 |
+| F1 `opinion` | 0.312 | 0.000 | -0.312 |
+| F1 `reaction` | 0.000 | 0.753 | +0.753 |
 
 **What I predicted before I looked:**
 Run 1 predicted `reaction` for every test post, so I expected the trained model to beat the baseline only on `reaction` F1 and on overall accuracy, and to lose on `info` and `opinion`. *(Written after the baseline had already run, so this is not a blind prediction.)*
@@ -418,9 +423,9 @@ So fine-tuning has not yet taught the model anything a general model can't do. W
 |---|---|---|---|
 | Overall accuracy | 0.208 | **0.667** | 0.604 |
 | Macro F1 | 0.205 | **0.575** | 0.251 |
-| F1 — `info` | 0.303 | 0.545 | 0.000 |
-| F1 — `opinion` | 0.312 | 0.400 | 0.000 |
-| F1 — `reaction` | 0.000 | 0.780 | 0.753 |
+| F1 `info` | 0.303 | 0.545 | 0.000 |
+| F1 `opinion` | 0.312 | 0.400 | 0.000 |
+| F1 `reaction` | 0.000 | 0.780 | 0.753 |
 
 On this model, my definitions were worth **−0.458 accuracy**: they made the baseline much worse. With bare names, the baseline beats the trained model on every measure.
 
@@ -429,6 +434,8 @@ The likely reason is how the `reaction` definition is phrased. It is long and en
 The definitions still work as written rules for a human labeller. But this result shows they are a weak prompt for an NLI model. I report the definitions run as my baseline because that is what this milestone asks for. The bare-names run is the stronger opponent, and it is the one my model has to beat.
 
 **Four-label check (extra).** For the stretch model I also ran the baseline with all four definitions on that run's own 66 test posts. Command: `python baseline.py --held-out experiments/results_4labels_test_split.csv --trained experiments/results_4labels.json --out experiments/baseline_4labels.json`. Baseline: accuracy 0.288, macro F1 0.218. Trained: 0.500 and 0.271. The pattern is the same as above: the baseline scores 0.121 F1 on `reaction` and 0.000 on `question`.
+
+These 66 posts are the seed-42 test split used in the run logs below (I checked that the texts match), so this is the baseline to compare against from Milestone 2 on. I also ran it with bare names on the same posts ([experiments/baseline_4labels_bare_names.json](experiments/baseline_4labels_bare_names.json)). It got 0.561 accuracy and 0.514 macro F1, with `info` 0.417, `opinion` 0.250, `reaction` 0.688 and `question` 0.700. That beats the before model on seed 42 (0.500 and 0.271). It is about level with the after model on macro F1 (0.517), though the after model is ahead on accuracy (0.621).
 
 
 
@@ -464,10 +471,10 @@ Per-measure spread from section 6:
 |---|---|---|---|---|
 | Overall accuracy | 0.500 | 0.561 | 0.545 | 0.061 |
 | Macro F1 | 0.271 | 0.323 | 0.298 | 0.051 |
-| F1 — `info` | 0.000 | 0.000 | 0.000 | 0.000 |
-| F1 — `opinion` | 0.452 | 0.625 | 0.519 | 0.173 |
-| F1 — `reaction` | 0.634 | 0.667 | 0.674 | 0.040 |
-| F1 — `question` | 0.000 | 0.000 | 0.000 | 0.000 |
+| F1 `info` | 0.000 | 0.000 | 0.000 | 0.000 |
+| F1 `opinion` | 0.452 | 0.625 | 0.519 | 0.173 |
+| F1 `reaction` | 0.634 | 0.667 | 0.674 | 0.040 |
+| F1 `question` | 0.000 | 0.000 | 0.000 | 0.000 |
 
 **The spread:** accuracy moved 6.1 points across seeds, under the 10-point line, so the overall number is fairly stable. `opinion` F1 is the jumpy one, moving 17 points.
 
@@ -631,10 +638,10 @@ I set `RUN_LABEL = "after"` before running section 6, so the before numbers in [
 |---|---|---|---|
 | Overall accuracy | 0.500 → **0.621** | 0.561 → **0.591** | 0.545 → **0.561** |
 | Macro F1 | 0.271 → **0.517** | 0.323 → **0.470** | 0.298 → **0.318** |
-| F1 — `info` | 0.000 → 0.000 | 0.000 → 0.000 | 0.000 → 0.000 |
-| F1 — `opinion` | 0.452 → **0.529** | 0.625 → **0.650** | 0.519 → **0.588** |
-| F1 — `reaction` | 0.634 → **0.714** | 0.667 → 0.657 | 0.674 → **0.684** |
-| F1 — `question` | 0.000 → **0.824** | 0.000 → **0.571** | 0.000 → 0.000 |
+| F1 `info` | 0.000 → 0.000 | 0.000 → 0.000 | 0.000 → 0.000 |
+| F1 `opinion` | 0.452 → **0.529** | 0.625 → **0.650** | 0.519 → **0.588** |
+| F1 `reaction` | 0.634 → **0.714** | 0.667 → 0.657 | 0.674 → **0.684** |
+| F1 `question` | 0.000 → **0.824** | 0.000 → **0.571** | 0.000 → 0.000 |
 | Confidence gap | 0.455 → 0.409 | 0.273 → **0.364** | 0.500 → **0.591** |
 
 Confusion matrix after, seed 42 (same test posts as the before matrix):
@@ -667,15 +674,24 @@ Yes, partly. Raising the learning rate improved accuracy and macro F1 on all thr
 
 ## What's Still Broken
 
-<!-- For each criterion still missed: what you'd do, and why you stopped. -->
+After the learning rate change, criteria 1, 2 and 3 are still missed, criterion 4 is met, and criterion 5 hasn't been tested.
 
+**Criterion 1 (accuracy ≥ 0.75).** After the fix the seeds score 0.621, 0.591 and 0.561, so it is still 13 to 19 points short. It's also not much better than a zero-shot model given only the four label names. On the 66 seed-42 test posts, that baseline gets 0.561 accuracy and 0.514 macro F1 ([experiments/baseline_4labels_bare_names.json](experiments/baseline_4labels_bare_names.json)), against 0.621 and 0.517 for my model. What I'd do next is relabel the `info`/`reaction` boundary and then retrain with lr 5e-5. That means going back through the roughly 24 rows Claude flagged, the 15 I moved from `reaction` to `info` in review, and any other `info` row that is mostly feeling. I didn't do it because this unit allows one change and I used it on the learning rate. Relabelling would also change my labels, which the unit says have to stay where they were.
 
+**Criterion 2 (every label's F1 ≥ 0.55).** `info` is still 0.000 on all three seeds, `question` is 0.000 on seed 2024, and `opinion` is 0.529 on seed 42. `info` would need the same relabelling as criterion 1. The zero-shot baseline gets 0.417 F1 on `info` from the label name alone, so the label is learnable and my training data is the likelier problem. For `question` I'd collect about 30 more real question comments, since the model only has 35 to learn from and seed 2024 never learned it. I stopped for the same reason: both fixes change the data, and I'd already made my one change.
+
+**Criterion 3 (smallest label ≥ 15%).** `question` is 51 of 438 rows (11.6%). It needs at least 18 more `question` rows to reach 15% ((51 + 18) / (438 + 18) = 15.1%). I didn't add them because labels are frozen for this unit.
+
+**Criterion 4 (confidence gap ≥ 0.30)** is met after the fix (0.409, 0.364, 0.591). Seed 7 is the closest to the line, so I wouldn't call it safe.
+
+**Criterion 5 (re-label 26 of 30 the same way).** Not tested. My criterion says to wait at least 7 days after finishing `labels.csv` (20 Oct), and the deadline is 25 Oct. I'd run it on 27 Oct or later and add the result to Verdicts without changing the target.
+
+The higher learning rate also isn't reliable yet. On seed 2024 it barely moved anything, and validation macro F1 dropped between epochs 2 and 3. I'd want more than three seeds before trusting 5e-5 as the setting.
 
 **The gap between what I meant my labels to capture and what the model
 learned:**
-<!-- Two sentences. Your confusion matrix is the evidence. -->
 
-
+I meant `info` to catch any comment that gives the reader something checkable, but after the fix the model still never predicts it, and on seed 42 it sends 7 of 11 real `info` posts to `reaction` and the other 4 to `opinion`. The same matrix sends 8 of 18 real `opinion` posts to `reaction`, so what it seems to have learned is tone, calling anything warm or fan-like a `reaction`, rather than my rule of stripping the feeling first and judging what's left.
 
 <!-- ═════════════════════════════════════════════════════════════════════
 
