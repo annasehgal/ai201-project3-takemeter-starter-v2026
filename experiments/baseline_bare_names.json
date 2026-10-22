@@ -1,0 +1,274 @@
+{
+  "model": "facebook/bart-large-mnli",
+  "n": 48,
+  "seed": 42,
+  "held_out": true,
+  "used_definitions": false,
+  "scores": {
+    "n": 48,
+    "accuracy": 0.6666666666666666,
+    "f1_macro": 0.5750385208012326,
+    "per_label": {
+      "info": {
+        "precision": 0.5454545454545454,
+        "recall": 0.5454545454545454,
+        "f1": 0.5454545454545454,
+        "support": 11
+      },
+      "opinion": {
+        "precision": 0.42857142857142855,
+        "recall": 0.375,
+        "f1": 0.39999999999999997,
+        "support": 8
+      },
+      "reaction": {
+        "precision": 0.7666666666666667,
+        "recall": 0.7931034482758621,
+        "f1": 0.7796610169491527,
+        "support": 29
+      }
+    }
+  },
+  "predictions": [
+    {
+      "text": "dimpled ARMY, we win (but especially her)",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "Fun question! Interesting to see everyone\u2019s answers. For me:\n\nRm - Dionysus   \nJin - crystal snow  \nSuga - fire  \nJhope - disease   \nJimin - blood sweat tears  \nV - jump  \nJk - magic shop",
+      "gold": "reaction",
+      "predicted": "opinion"
+    },
+    {
+      "text": "**links**\n* [Samsung Mobile on Instagram](https://www.instagram.com/p/DejYEAehX_5/)  \n\n\"Behind every performance, a story unfolds.\n\nGalaxy Z Fold8 has been with @uarmyhope every step of the way behind the scenes.\n\nStay tuned for the full performance \u2728\"",
+      "gold": "info",
+      "predicted": "info"
+    },
+    {
+      "text": "I fear you mistook JK for Yoongi \ud83d\ude2d",
+      "gold": "info",
+      "predicted": "reaction"
+    },
+    {
+      "text": "I can only see a grey screen wtf weverse\ud83d\ude2d\ud83d\ude2d\ud83d\ude2d",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "For his farewell concert from Chile, he posts \"Baila, Baila.\" How painfully beautiful \ud83e\udd79. ",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "eeyy i was at tampa day 2 with my brother \ud83d\ude0e \n\nwho is your bias/bias wrecker: so when i first became an army my bias was hobi, and jin was my bias wrecker. however jin wrecked me too hard and became my bias lol\n\nwhat song/album/moment converted me into a army: funnily enough... back in 2018 bad lip reading made a video on idol, and that made me want to check out the actual music video \ud83d\ude05 that's when i became an army along with my younger brother \n\nhave i been to any shows: was supposed to go to the mots concert in orlando, we all know how that ended up. finally saw them live in april this year on tampa day 2 (i can't believe it's already been about 7 months since the concert \ud83e\udd72)",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "same!!!! we at least have glimpses of blue skies now after a month of grey ",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "There's a \"kpop event\" at our local beer garden but it's basically just all BTS \ud83d\udc9c",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "That\u2019s okay\u2026I did the same thing. Jin is so gorgeous!",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "I use musicat to scrobble (the tracking app). At first, I used last fm but I switched after they started being weird about BTS\n\nI actually don't know for sure if you can change your username on there because I never had cause to do so (so I never checked that out) but I think you can",
+      "gold": "info",
+      "predicted": "info"
+    },
+    {
+      "text": "Sweet Dreams, swim, butter,dynamite, mic drop just such pleasant songs and anything by August D when I need energy",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "oh that humming was perfect jimin you sing so well \ud83d\ude2d",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "Thanks! I think I\u2019m going to go again\u2026just got an email that I can apply my ticket toward a membership, so I will prob take them up on it. ",
+      "gold": "info",
+      "predicted": "info"
+    },
+    {
+      "text": "I think WINGS seems to be a popular choice among the comments here, and I have to agree. Map of the Soul was such an interesting concept but when 7 dropped I felt like the themes were lost on me a little bit. Maybe I need to go back and brush up on it.",
+      "gold": "opinion",
+      "predicted": "opinion"
+    },
+    {
+      "text": "happy cake day!! and we have the same bias!\n\nI love seeing the girls bringing their men here haha. God bless her indeed",
+      "gold": "reaction",
+      "predicted": "opinion"
+    },
+    {
+      "text": "I don\u2019t think I could eat that. Playing with food that is hilarious and so Tae. ",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "we need more long hair tannies \ud83d\udc9c",
+      "gold": "info",
+      "predicted": "reaction"
+    },
+    {
+      "text": "I thought the silly dance had to be Tae.",
+      "gold": "opinion",
+      "predicted": "opinion"
+    },
+    {
+      "text": "thats so cute\\~\\~ i love seeing relationships that formed through the ARMY fanbase. Its so precious!",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "I am a jinkook heart!",
+      "gold": "info",
+      "predicted": "opinion"
+    },
+    {
+      "text": "I LOVE Nathan's humor. The trailer had me so baffled lol. I'm def gonna go watch it because it looks weird af. ",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "Lovely, lovelier, loveliest.\n\nJin is so stunning, words always fail me.",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "I'm sure that's part of it and then there's definitely plenty of people lusting after him and constantly trying to get his attention during appearances (while he's working to protect the members).",
+      "gold": "opinion",
+      "predicted": "info"
+    },
+    {
+      "text": "I knew it from the very beginning!\n\nOf course, it is not the end of the game yet, but the winner is very OBVIOUS here.\n\nThe next time there is any voting-based game which is not OT7 but involves individual members, we can just pick Yoongi and save the time, I guess \ud83e\udd23\n\nhttps://preview.redd.it/e1yq6tn6g9wh1.jpeg?width=1080&format=pjpg&auto=webp&s=59e6053768ee6611564e3c466fedc333565da171",
+      "gold": "opinion",
+      "predicted": "reaction"
+    },
+    {
+      "text": "I was at an event and missed most of the live :( But I got to watch the last few minutes. Didn't understand anything, since I don't have a subscription for subtitles, but seeing his pretty face and listening to his soft voice was enough. He's so sweet and gentle and comforting. I'm going to watch the whole thing once subtitles are out! ",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "TTMIK sometimes posts shorts of conversational Korean translated into English but maintaining Korean word order (What English would sound like with Korean grammar), which I personally find really helpful, and yeah, the Yoda comment does come up with some frequency!\n\nIt makes sense, I guess, since grammar/word order (SVO/SOV/OSV/topic-prominent language word orders) being applied differently from the norm in any language is a big part of what makes someone sound \"other\", and that was part of the character design shorthand for Yoda.",
+      "gold": "info",
+      "predicted": "info"
+    },
+    {
+      "text": "magic shop always reminds me of jimin lmao",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "I saw a BTS edit somewhere and I didn't know where it was from and thought it was some sort of AI. Lemme see if I can find it again.",
+      "gold": "info",
+      "predicted": "info"
+    },
+    {
+      "text": "It just looks so cozy \ud83d\ude0a",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "I love when they do that it\u2019s so cute ",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "dimple, don't leave me, tomorrow, and louder than bombs! ",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "Honestly I never doubted. I just knew I'd have to wait. I've been ARMY since 2014 and I believed they'd come back as seven. Something was different about them, because believe me I'd gone through SO MANY groups disbanding, losing members, just not returning after enlistment. But something in me just knew I'd only have to wait.\n\nIt was rough and I wouldn't have gotten through it without ATEEZ and Stray Kids in particular, but I knew they'd come back to us.",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "Yoongi bias just because I relate to him the most in personality.\n\nSince I'm a (street) dancer, I became a fan after seeing a cover of IDOL's choreography done by Jimin's old classmate Nihoo. Then I checked out their MMA 2018 performance and slowly discovered their tracks at my own pace. Enlisted at the same time as most of them (late 2023 while I went early 2024) in my country.\n\nHaven't been to shows yet but have to go before I die. \n\nGot a lot of fashion inspiration from them too, especially JK, Jimin and Yoongi. Discovering them transformed a lot of my street style.",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "Aww I was looking for Jimin's legs\ud83d\ude2d",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "Omg mentally saving this new nickname",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "Taehyung in first pic is literally looking like seonghyeon from cortis \ud83d\ude0d",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "Namjoon look so finee, the hair, the face, the vibee everything so handsomee\ud83e\udd79\ud83d\udc9c",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "This is a great list. Love Tae in Jump--they really put his low voice to work there. More so than any other song, I think? \n\nAnd Jimin for BST. Obvious reasons. Ditto for Suga, JK, and RM. I'm not sure I agree with Jin and JHope, but I can't necessarily think of a better choice, either. ",
+      "gold": "opinion",
+      "predicted": "opinion"
+    },
+    {
+      "text": "The duality of hope. ",
+      "gold": "reaction",
+      "predicted": "opinion"
+    },
+    {
+      "text": "i think it's because YouTube views and streams no longer count toward U.S. Billboard charts (since Jan 2026)  ",
+      "gold": "info",
+      "predicted": "info"
+    },
+    {
+      "text": "I'm betting spine breaker.",
+      "gold": "opinion",
+      "predicted": "reaction"
+    },
+    {
+      "text": "I seriously love Jin so much for that. Coming out of military and going into a live performance for ARMY the very next day because it was festa, doing a solo tour, giving our two albums, and regular Run Jin. Along with that so so so many promo videos and interviews. He did so much just so that we could have laugh and chill and have fun. \n\nI love that our timeline and our memories is full of fancams now. Otherwise it used to be some trivial drama or the other every two days. Now the negativity doesn't get much space to thrive.",
+      "gold": "opinion",
+      "predicted": "reaction"
+    },
+    {
+      "text": "ahhhhhh ma city!!! this feels so surreal\ud83e\udd79\ud83d\ude2d\ud83d\ude2d",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "Joon - Dimple or Baepsae\n\nJin - The Truth Untold \n\nYoongi - Daechitwa \n\nHobi - Just Dance\n\nTae - Ddaeng iykyk \ud83d\udce3\ud83d\ude02 or Pied Piper, Airplane pt 2\n\nJimin - Save Me\n\nJK - Magic Shop",
+      "gold": "opinion",
+      "predicted": "info"
+    },
+    {
+      "text": "I love the pictures where he looks like a rich wine aunt - you know what I mean? That's who I aspire to be one day lol",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "still addicted to this",
+      "gold": "info",
+      "predicted": "reaction"
+    },
+    {
+      "text": "Welcome ARMY! Sometimes I get BT21 merch, albums, and clothing from Amazon or Target. If you want more tour or current merch I sometimes use Cokodive, but be warned that it could get pricey on their site due to tariffs and shipping costs. For older/rarer merch I use Mercari or Ebay.",
+      "gold": "info",
+      "predicted": "reaction"
+    }
+  ]
+}

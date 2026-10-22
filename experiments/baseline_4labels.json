@@ -1,0 +1,370 @@
+{
+  "model": "facebook/bart-large-mnli",
+  "n": 66,
+  "seed": 42,
+  "held_out": true,
+  "used_definitions": true,
+  "scores": {
+    "n": 66,
+    "accuracy": 0.2878787878787879,
+    "f1_macro": 0.21774264382960032,
+    "per_label": {
+      "info": {
+        "precision": 0.17142857142857143,
+        "recall": 0.5454545454545454,
+        "f1": 0.26086956521739124,
+        "support": 11
+      },
+      "opinion": {
+        "precision": 0.4074074074074074,
+        "recall": 0.6111111111111112,
+        "f1": 0.4888888888888889,
+        "support": 18
+      },
+      "question": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 8
+      },
+      "reaction": {
+        "precision": 0.5,
+        "recall": 0.06896551724137931,
+        "f1": 0.1212121212121212,
+        "support": 29
+      }
+    }
+  },
+  "predictions": [
+    {
+      "text": "The tickets are booked. Even though we're not on until 2:45 PM on the 25th/31st, we'll celebrate and join in so that South America feels the aftershock. \ud83d\udc9c\ud83e\udef0\ud83c\udffb\nI'm still hoping for a Weverse livestream, then we'll get double the fun. ",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "I knew it from the very beginning!\n\nOf course, it is not the end of the game yet, but the winner is very OBVIOUS here.\n\nThe next time there is any voting-based game which is not OT7 but involves individual members, we can just pick Yoongi and save the time, I guess \ud83e\udd23\n\nhttps://preview.redd.it/e1yq6tn6g9wh1.jpeg?width=1080&format=pjpg&auto=webp&s=59e6053768ee6611564e3c466fedc333565da171",
+      "gold": "opinion",
+      "predicted": "info"
+    },
+    {
+      "text": "Any idea what is written on the poster? ",
+      "gold": "question",
+      "predicted": "opinion"
+    },
+    {
+      "text": "I'd say the same except Jin would be Spring Day.",
+      "gold": "reaction",
+      "predicted": "opinion"
+    },
+    {
+      "text": "i was a big bang fan before i was an army - i don\u2019t think anything beats the mess that was bb\u2019s enlistment era and they\u2019re still around (if in a slightly different way than before) so i was always pretty sure bts would make it through better than that lol",
+      "gold": "opinion",
+      "predicted": "opinion"
+    },
+    {
+      "text": "I fear you mistook JK for Yoongi \ud83d\ude2d",
+      "gold": "info",
+      "predicted": "opinion"
+    },
+    {
+      "text": "This is such a fun question! I'll do their solo songs that best remind me of them\n\nRM- Wildflower, Come back to me\n\nJin- Astronaut, I will come to you\n\nSuga- Shadow, Amygdala\n\nJhope- Airplane, Hope World\n\nJimin- Promise, Filter\n\nV- Winter bear, Love wins all\n\nJungkook- Euphoria, Begin\n\n",
+      "gold": "reaction",
+      "predicted": "opinion"
+    },
+    {
+      "text": "Anyone going for the BA one in Limerick? ",
+      "gold": "question",
+      "predicted": "info"
+    },
+    {
+      "text": "In honor of tonight, I'm going to download BTS World. \ud83d\ude02",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "Looking so cute in his HUMAN MADE",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "true it was how i knew what he was watching lmaooo",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "The confetti drop would be amazing, cause that was such a sad moment for me personally, but if someone proposed to me during that it would make that part a million times better. \n\nGood luck OP!",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "I am a jinkook heart!",
+      "gold": "info",
+      "predicted": "reaction"
+    },
+    {
+      "text": "Oh his dream came true? ",
+      "gold": "question",
+      "predicted": "info"
+    },
+    {
+      "text": "Somehow I feel like Taehyung is the mastermind here too",
+      "gold": "opinion",
+      "predicted": "info"
+    },
+    {
+      "text": "I totally agree. It was still very, very hard for me.  It took me a while to get out of my grief to realize how they were doing their best to help us not miss them as much. \n\nLike once they first began getting called I didn\u2019t want to hear about it. People at work knew I loved them and came up to me to say \u201chey did you hear\u2026\u201d I would say \u201cgo back to your department\u201d \ud83d\ude12   \nI would skip their music if it came on my music while driving. Girl! Every other song was theirs. And I would tear up no matter what the song. ",
+      "gold": "reaction",
+      "predicted": "opinion"
+    },
+    {
+      "text": "I agree with the comment that fanchants probably have gone away because we prefer to sing the whole thing... this was my actual struggle during FAKE LOVE. Do I sing FAKE LOVE? Do I fan chant FAKE LOVE? Where am I supposed to come in on this hellllllp",
+      "gold": "opinion",
+      "predicted": "opinion"
+    },
+    {
+      "text": "TTMIK sometimes posts shorts of conversational Korean translated into English but maintaining Korean word order (What English would sound like with Korean grammar), which I personally find really helpful, and yeah, the Yoda comment does come up with some frequency!\n\nIt makes sense, I guess, since grammar/word order (SVO/SOV/OSV/topic-prominent language word orders) being applied differently from the norm in any language is a big part of what makes someone sound \"other\", and that was part of the character design shorthand for Yoda.",
+      "gold": "info",
+      "predicted": "reaction"
+    },
+    {
+      "text": "EYYYYY MALE ARMY HERE! :D\n\nMy bias is Suga and my wrecker is JK\n\nMy friend finally got me into them in 2017 with a combo of Not Today and DNA and I gotta say my fav album is You Never Walk Alone.\n\nI was able to go to the ARIRANG stop Sept.5th in LA! It was my first Kpop concert and gosh it was amazing!!!\n\nLove to the army (-\\^\\^-)\ud83d\udc9c",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "An entire month! Exciting!",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "I saw a BTS edit somewhere and I didn't know where it was from and thought it was some sort of AI. Lemme see if I can find it again.",
+      "gold": "info",
+      "predicted": "opinion"
+    },
+    {
+      "text": "still addicted to this",
+      "gold": "info",
+      "predicted": "info"
+    },
+    {
+      "text": "magic shop always reminds me of jimin lmao",
+      "gold": "reaction",
+      "predicted": "opinion"
+    },
+    {
+      "text": "That young lady has some epic dimples.",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "I love Taehyung\u2019s vlogs. He\u2019s been killing the visual aesthetics lately with his most recent vlogs, tiktoks and even his latest photobook. He definitely has an eye for romanticizing his life. Even his mvs have that type of aura.",
+      "gold": "opinion",
+      "predicted": "opinion"
+    },
+    {
+      "text": "Army Time is the break after the Idol walk when Armys show their signs for the cameras.",
+      "gold": "info",
+      "predicted": "info"
+    },
+    {
+      "text": "Hobi always includes him and gives him his flowers \ud83d\udc9c",
+      "gold": "opinion",
+      "predicted": "info"
+    },
+    {
+      "text": "Oh haha what is he saying?",
+      "gold": "question",
+      "predicted": "opinion"
+    },
+    {
+      "text": "Disease is such an underrated gem! But I\u2019m partial to everything on BE",
+      "gold": "opinion",
+      "predicted": "info"
+    },
+    {
+      "text": "The song is really so good \ud83d\udc99",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "These pics are so adorable!",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "These photos bring back so many precious memories ",
+      "gold": "reaction",
+      "predicted": "reaction"
+    },
+    {
+      "text": "I\u2019m going to Singapore for the first time with my little family and I cannot wait to experience all of this!!! It\u2019ll be my first BTS concert and my 10 yr olds first grown up concert ",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "I would be pissed if i was proposed to at any concert. Period. Full stop.\n\nBUT...if this person is going to do it anyway, that is when I'd suggest doing it. They've walked off stage already. Music is still playing. It's an emotional high point. The likelihood of a yes is high. There are fireworks. ",
+      "gold": "opinion",
+      "predicted": "opinion"
+    },
+    {
+      "text": "Ooo can we share our bcd users? ",
+      "gold": "question",
+      "predicted": "info"
+    },
+    {
+      "text": "Thanks! I think I\u2019m going to go again\u2026just got an email that I can apply my ticket toward a membership, so I will prob take them up on it. ",
+      "gold": "info",
+      "predicted": "info"
+    },
+    {
+      "text": "I love when they do that it\u2019s so cute ",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "Can you provide a source to verify this?",
+      "gold": "question",
+      "predicted": "info"
+    },
+    {
+      "text": "Who is your bias (or bias-wrecker)?  \njimin, the god\n\nWhat song, album, or moment officially converted you into an ARMY?  \nwhen just one day came out, i couldn't stop thinking about it or singing it in my head.  i had written off bts up until that point, and didn't want to consider myself an actual fan. By the time I Need U came out, i was like why do i just keep lying to myself and fully gave in. \n\nHave you been to any shows, or are you mostly an online fan for now?  \nEvery tour,  except red bullet and wings unfortunately. \n\n",
+      "gold": "reaction",
+      "predicted": "opinion"
+    },
+    {
+      "text": "When was this filmed??? Jimin\u2019s hair is so short but Suga\u2019s is still long??? But GD is really slim so it has to be recent???? I\u2019m so confused",
+      "gold": "opinion",
+      "predicted": "opinion"
+    },
+    {
+      "text": "Our hot, unproblematic wwh. \n\n(What is your flair referencing pls?! \ud83d\ude05)",
+      "gold": "question",
+      "predicted": "info"
+    },
+    {
+      "text": "Umm, it's Boy With Love for me \ud83d\ude0a\n\nI voted for it since the very beginning, so it's a nice surprise that it made an unexpected comeback! The song is so cheerful. I can't count how many times I watched the MV and dance practices.",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "Thanks for the detailed review! ",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "Welcome ARMY! Sometimes I get BT21 merch, albums, and clothing from Amazon or Target. If you want more tour or current merch I sometimes use Cokodive, but be warned that it could get pricey on their site due to tariffs and shipping costs. For older/rarer merch I use Mercari or Ebay.",
+      "gold": "info",
+      "predicted": "opinion"
+    },
+    {
+      "text": "\u201cWe can\u2019t expect everyone to know everything in the world.\u201d\n\nOf course we can\u2019t, but it\u2019s okay to point out something that better educates anyone who sees this comment. Not sure why that merits being downvoted. \n\nI don\u2019t know why the picture was posted. I\u2019m not speculating on that. I\u2019m talking about the coffee company. \n\nIsn\u2019t it better that a fan, a Black fan at that, is pointing this out within a fan space than an anti who can use it for whatever narrative they want to?",
+      "gold": "opinion",
+      "predicted": "info"
+    },
+    {
+      "text": "Joon\u2019s arms are out - please let me see them again on the big screen next week \ud83d\ude4f\ud83c\udffb",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "Ooh, the \"ani\" was loud as hell, well done",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "Welcome to the rabbit hole from one millennial to another!\n\nYoongi is such an incredible entry point and his Agust D work has so much raw energy and honesty, you can't help but respect his craft. watch out because the maknae line will always try to wreck your bias list haha. \n\nDefinitely take the leap and go to a live show next year, even if you go solo! The concert energy is unmatched and ARMY in the crowd are super welcoming. I\u2019ve made friends in line in five minutes. What Agust D or group track are you hoping to hear live the most?",
+      "gold": "opinion",
+      "predicted": "info"
+    },
+    {
+      "text": "old school fan checking in from debut lol. song that hooked me was in fact no more dream and we are bulletproof pt 2 because they were so different from the rest of kpop of that era. kept up with them until 2016 or so then fell out of kpop all together due to life.\n\ncame back during the pandemic when WABP:TE was randomly on my home page on its release date and it was like i never left. immediately began trying to catch up on *everything*\n\nhaven't gotten to see the guys in person yet but I've seen 3 of their shows in theaters. \n\noriginal bias was Jimin and V, but it's bounced all over the place depending on context and era. though Jungkook has completely wrecked my bias list out of nowhere this year",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "Who do you guys vote for the female category? Is it random or is there a specific female group I should be voting for?",
+      "gold": "question",
+      "predicted": "opinion"
+    },
+    {
+      "text": "https://preview.redd.it/rilep6tg2dvh1.jpeg?width=415&format=pjpg&auto=webp&s=253afebd04c01524167e9c929904fbbdb577d981\n\nWe didn\u2019t get a vinyl release of Echo, right? I need more rockstar Jin in my record collection. \n\n(If you\u2019re see this BigHit intern, I can wait till next year, the tour was a hard hit on my wallet, let\u2019s take things easy. But don\u2019t forget that I need it)",
+      "gold": "reaction",
+      "predicted": "opinion"
+    },
+    {
+      "text": "The worst part are the cheers that erupted in response",
+      "gold": "opinion",
+      "predicted": "opinion"
+    },
+    {
+      "text": ">But I agree for now it's a minority, just a very loud one at times\n\nI do a lot of blocking/muting and still it comes through at times, so yes I agree \ud83d\ude2d \n\nI agree a lot with your reasoning for why it is so. And i think some of it is also due to us having lost a lot of valuable translators over the years. They used to serve as a beautiful link between the two sides, clearing up misunderstandings, providing important context, etc. \n\nThese days we still have a lot of fans who do translations, but they're fragmented and there aren't many who we all turn to.",
+      "gold": "opinion",
+      "predicted": "info"
+    },
+    {
+      "text": "Save me save me ",
+      "gold": "reaction",
+      "predicted": "opinion"
+    },
+    {
+      "text": "Not one Boongi photo this time - he rolled out the heavy artillery \ud83d\ude2d",
+      "gold": "reaction",
+      "predicted": "opinion"
+    },
+    {
+      "text": "**links**\n* [Samsung Mobile on Instagram](https://www.instagram.com/p/DejYEAehX_5/)  \n\n\"Behind every performance, a story unfolds.\n\nGalaxy Z Fold8 has been with @uarmyhope every step of the way behind the scenes.\n\nStay tuned for the full performance \u2728\"",
+      "gold": "info",
+      "predicted": "info"
+    },
+    {
+      "text": "we need more long hair tannies \ud83d\udc9c",
+      "gold": "info",
+      "predicted": "info"
+    },
+    {
+      "text": "jimin is giggling from bangtan giggles then how am i supposed to survive",
+      "gold": "reaction",
+      "predicted": "opinion"
+    },
+    {
+      "text": "Please don\u2019t do this DURING the concert \ud83e\udd72",
+      "gold": "opinion",
+      "predicted": "opinion"
+    },
+    {
+      "text": "yeah the day they announced enlistment I knew they would be back no doubt. ",
+      "gold": "reaction",
+      "predicted": "info"
+    },
+    {
+      "text": "Yeah, this one makes me sad \ud83e\udd72\n\nEspecially because it feels quite one-sided from international fans' side. Could be my algorithm of course, but I hardly come across anything from K-ARMYs being mean or critical of international ARMYs. They always seem so proud and grateful. \n\nBut the international side has become a lot more critical of the k side in recent years. \n\nThough I WILL say it does feel like a vocal minority (which is still huge in a fandom like ours, and they're LOUD) and I would say we still mostly get along. We still seem to come together well for BTS when it matters. ",
+      "gold": "opinion",
+      "predicted": "opinion"
+    },
+    {
+      "text": "Joon - Dimple or Baepsae\n\nJin - The Truth Untold \n\nYoongi - Daechitwa \n\nHobi - Just Dance\n\nTae - Ddaeng iykyk \ud83d\udce3\ud83d\ude02 or Pied Piper, Airplane pt 2\n\nJimin - Save Me\n\nJK - Magic Shop",
+      "gold": "opinion",
+      "predicted": "opinion"
+    },
+    {
+      "text": "i think it's because YouTube views and streams no longer count toward U.S. Billboard charts (since Jan 2026)  ",
+      "gold": "info",
+      "predicted": "info"
+    },
+    {
+      "text": "I think as soon as Jin was discharged and he never rested and did so much to fill the time between when Hobi was discharged and then when the rest were too. Honestly 2seok gave it their all and made it clear they also couldn\u2019t wait until they were 7 again!",
+      "gold": "opinion",
+      "predicted": "opinion"
+    },
+    {
+      "text": "Please turn off the comments. We know they're bad but we shouldn't let them ruin the whole live.",
+      "gold": "opinion",
+      "predicted": "opinion"
+    },
+    {
+      "text": "I LOVE Nathan's humor. The trailer had me so baffled lol. I'm def gonna go watch it because it looks weird af. ",
+      "gold": "reaction",
+      "predicted": "opinion"
+    }
+  ]
+}

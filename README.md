@@ -376,7 +376,7 @@ I set out to complete all three stretch features (stated here before starting). 
 - I kept the AI label on all 121 stretch rows, so those labels rest on my agreeing with every suggestion, including the 40 marked unsure.
 - The four-label run is one seed with only 8 `question` posts in test, so its `question` score could move a lot on another seed.
 - Feature 2 is one seed and one test split of 48 posts. A one-post difference could reverse on another seed.
-- `label_definitions.txt` now has four definitions, but the committed `baseline_results.json` was scored with the original three, on the three-label `test_split.csv`. A fair Unit 6 comparison uses those three-label files together; re-running the baseline now would give it a fourth option the test posts were never labelled with.
+- `label_definitions.txt` now has four definitions. The Unit 6 baseline in `baseline_results.json` was rerun with `--data test_split.csv`, so it is offered only the three labels those test posts were labelled with. Only the three matching definitions are used.
 - `results.json` and `test_split.csv` (run 1) were trained and tested on `labels.csv` as of commit 32a4243 (316 rows, three labels) and are unchanged; they remain the record of the original run. Running the notebook now trains on the 438-row, four-label file and would overwrite them, so later runs should go through `run_experiment.py` or be committed under a new name.
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
@@ -391,20 +391,44 @@ I set out to complete all three stretch features (stated here before starting). 
 <!-- Both models on the same posts. `python baseline.py --trained results.json`
      prints this table for you. -->
 
+Both models were scored on the same 48 posts in [test_split.csv](test_split.csv). These are the three-label held-out posts from run 1, compared against the three-label trained model in [results.json](results.json). The baseline is `facebook/bart-large-mnli` zero-shot, given only the definitions in [label_definitions.txt](label_definitions.txt). Command: `python baseline.py --data test_split.csv --trained results.json`. `--data test_split.csv` limits the candidate labels to the three these posts were labelled with, so the baseline is not offered `question`. Output: [baseline_results.json](baseline_results.json).
+
 | Measure | Baseline | Trained | Difference |
 |---|---|---|---|
-| Overall accuracy |  |  |  |
-| Macro F1 |  |  |  |
-| F1 — `label_one` |  |  |  |
-| F1 — `label_two` |  |  |  |
+| Overall accuracy | 0.208 | 0.604 | +0.396 |
+| Macro F1 | 0.205 | 0.251 | +0.046 |
+| F1 — `info` | 0.303 | 0.000 | -0.303 |
+| F1 — `opinion` | 0.312 | 0.000 | -0.312 |
+| F1 — `reaction` | 0.000 | 0.753 | +0.753 |
 
 **What I predicted before I looked:**
-<!-- Milestone 1 asks you to write this BEFORE seeing the trained numbers. A
-     prediction made afterwards isn't one. -->
+Run 1 predicted `reaction` for every test post, so I expected the trained model to beat the baseline only on `reaction` F1 and on overall accuracy, and to lose on `info` and `opinion`. *(Written after the baseline had already run, so this is not a blind prediction.)*
 
 **What the gap actually means:**
-<!-- If the baseline matched your trained model, your fine-tuning added
-     nothing — and that is a real finding, not a failure. Say it plainly. -->
+
+The trained model wins on accuracy only because it predicts `reaction` for every post, and 29 of the 48 test posts are `reaction`. Macro F1 is almost the same (0.251 vs 0.205). The two models fail in opposite ways:
+- **Trained model:** never predicts `info` or `opinion`.
+- **Baseline with definitions:** almost never predicts `reaction`. All 29 real `reaction` posts went to `info` (14) or `opinion` (15), and it predicted `reaction` only twice in total.
+
+So fine-tuning has not yet taught the model anything a general model can't do. What it learned is the majority label.
+
+**Definitions vs. bare label names.** I ran the baseline a second time with no definitions file, so it saw only the words `info`, `opinion` and `reaction`. Output: [experiments/baseline_bare_names.json](experiments/baseline_bare_names.json).
+
+| Measure | Baseline, definitions | Baseline, bare names | Trained |
+|---|---|---|---|
+| Overall accuracy | 0.208 | **0.667** | 0.604 |
+| Macro F1 | 0.205 | **0.575** | 0.251 |
+| F1 — `info` | 0.303 | 0.545 | 0.000 |
+| F1 — `opinion` | 0.312 | 0.400 | 0.000 |
+| F1 — `reaction` | 0.000 | 0.780 | 0.753 |
+
+On this model, my definitions were worth **−0.458 accuracy**: they made the baseline much worse. With bare names, the baseline beats the trained model on every measure.
+
+The likely reason is how the `reaction` definition is phrased. It is long and ends in two exclusions ("without supplying checkable information … or taking a side another fan could argue with"). Zero-shot NLI models are known to handle negation poorly. If that is what happened here, the model matched on "checkable information" and "taking a side" and read the hypothesis as being about exactly what it excludes. This is a guess I have not tested.
+
+The definitions still work as written rules for a human labeller. But this result shows they are a weak prompt for an NLI model. I report the definitions run as my baseline because that is what this milestone asks for. The bare-names run is the stronger opponent, and it is the one my model has to beat.
+
+**Four-label check (extra).** For the stretch model I also ran the baseline with all four definitions on that run's own 66 test posts. Command: `python baseline.py --held-out experiments/results_4labels_test_split.csv --trained experiments/results_4labels.json --out experiments/baseline_4labels.json`. Baseline: accuracy 0.288, macro F1 0.218. Trained: 0.500 and 0.271. The pattern is the same as above: the baseline scores 0.121 F1 on `reaction` and 0.000 on `question`.
 
 
 
