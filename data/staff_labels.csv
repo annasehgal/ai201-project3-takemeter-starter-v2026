@@ -1,0 +1,31 @@
+id,label,borderline,why
+sp_001,analysis,,"Two checkable numbers, and the contrast between them IS the claim."
+sp_002,analysis,,"Personal data, stated with its own limits, and the numbers drive the conclusion."
+sp_003,analysis,,"Named date, named rule change, named consequence."
+sp_004,analysis,,"Sets up a test, reports what it showed, draws the inference."
+sp_005,analysis,yes,"HARD. Reads like a hot take about shoes for one clause, then the second sentence does the work with two comparable numbers. Rule 1: fact carries it."
+sp_006,analysis,,"Two percentages, explicitly used to reject a rival explanation."
+sp_007,analysis,,Controlled-ish comparison with a number attached.
+sp_008,analysis,,"Range across a named span, used to argue against a one-off explanation."
+sp_009,analysis,,"Date, measurement, and the arithmetic consequence."
+sp_010,analysis,yes,"HARD. Hedged conclusion, tiny sample, but the observation is checkable and it is what the claim rests on."
+sp_011,hot_take,,"Assertion about a group, zero support."
+sp_012,hot_take,,"Pure claim, and a funny one, but nothing is argued."
+sp_013,hot_take,,"Strong, general, unsupported."
+sp_014,hot_take,yes,"HARD, and the canonical rule-1 case. The 3% is decoration on a conclusion already reached — 'so obviously' does the work, not the number."
+sp_015,hot_take,,"Aphorism, no support offered."
+sp_016,hot_take,,Confident prescription with nothing behind it.
+sp_017,hot_take,,"Named year, but nothing checkable is offered — the year is part of the assertion, not evidence for it."
+sp_018,hot_take,,"Two claims, no support."
+sp_019,hot_take,yes,"HARD. Reads reflective and almost like reaction, but it is a general claim about everyone rather than a report of the writer's morning. Rule 2."
+sp_020,hot_take,yes,"HARD. Sounds observational and could be checked in principle, but no count is given — the writer is asserting, not showing."
+sp_021,reaction,,"The writer's own race, minutes ago, feeling front and centre. The number is the news, not an argument."
+sp_022,reaction,,Immediate personal experience.
+sp_023,reaction,,"Just happened, about the writer, feeling."
+sp_024,reaction,,Response to something happening now.
+sp_025,reaction,,"Immediate, personal, no general claim."
+sp_026,reaction,,"Feeling, immediate, specific to the writer."
+sp_027,reaction,,Report of the run just done.
+sp_028,reaction,yes,"HARD. 'Third this year' is countable, but nothing is argued from it — it is the writer reporting their own state. Rule 3 doesn't rescue it into analysis because no fact is load-bearing."
+sp_029,reaction,yes,"HARD. A shoe observation, and it could be read as a wry hot take about shoe discourse — but it reports the writer's own realisation, now. Rule 2."
+sp_030,reaction,,"Immediate, personal, feeling."

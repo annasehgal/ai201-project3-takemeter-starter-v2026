@@ -530,49 +530,33 @@ The same lean shows up on every seed: 8 and 11 `opinion` posts were sent to `rea
      data/staff_taxonomy.md, not your own — so every argument below is made
      from those definitions and those decision rules. -->
 
-**Agreement rate:** ___ / 30 = ___%
+**Agreement rate:** 30 / 30 = 100%
 
-<!-- Nobody grades this number. A 60% who argues every disagreement from the
-     stated rules beats a 95% who wrote "staff was right" nine times. Several
-     of the 30 were chosen because they're genuinely ambiguous — you should be
-     winning some of these. -->
+**How I labelled them:** I read [data/staff_taxonomy.md](data/staff_taxonomy.md) and labelled all 30 posts in [data/staff_posts.csv](data/staff_posts.csv) under its three definitions and four rules. I saved them to [my_staff_labels.csv](my_staff_labels.csv). The staff file ([data/staff_labels.csv](data/staff_labels.csv)) was already downloaded by the time I last saved mine, but I hadn't opened it. I only looked at it after `python agreement.py` had run. Output: [agreement_results.json](agreement_results.json).
 
 **Disagreements**
 
-<!-- Three lines each: the post, both labels, and who you think is right and
-     why — grounded in the staff definitions you were both applying.
+None. `agreement.py` found 0 disagreements, so there is nothing to sort into piles (a), (b) or (c).
 
-     Then sort each into one of three piles:
-       (a) the rule covered it and I applied it loosely → a consistency problem
-       (b) the rule genuinely doesn't say               → a gap in the definitions
-       (c) the rule is ambiguous here and my reading is defensible → argue it.
-           This is a legitimate win.
+**The posts staff marked as borderline.** Staff flagged 7 of the 30 as deliberately hard. I matched all 7. In each case, the rule below is the one that settled it for me:
 
-     Pile (a) is the one that matters most for your diagnosis: if you applied a
-     written rule two different ways on 30 posts, that is direct evidence about
-     what you did across your own 200. -->
-
-**1.**
-> *The post:*
->
-> *Staff said / I said:*
->
-> *My call, and why:*
->
-> *Which pile:*
-
-**2.**
-> *The post:*
->
-> *Staff said / I said:*
->
-> *My call, and why:*
->
-> *Which pile:*
+| Post | Label | The rule that decided it |
+|---|---|---|
+| sp_005, "Carbon plates aren't the whole story…" | `analysis` | Rule 1. The first clause sounds like a hot take, but the two 2% drops, with mileage as the only change, are the argument. |
+| sp_010, "Three of us ran the same session…" | `analysis` | Rule 1. The sample is tiny and the conclusion is hedged, but the observation is checkable and the claim rests on it. |
+| sp_014, "Times are down about 3%… so obviously…" | `hot_take` | Rule 1. "So obviously" draws the conclusion; the 3% is decoration. It is nearly the taxonomy's own example. |
+| sp_019, "Nobody actually enjoys the long run…" | `hot_take` | Rule 2. It sounds reflective, but it is a general claim about everyone, not a report of the writer's own run. |
+| sp_020, "Every injury thread on this forum…" | `hot_take` | Rule 1. It could be checked in principle, but no count is given, so nothing is shown. |
+| sp_028, "Third DNF this year…" | `reaction` | Rule 3. "Third this year" is countable, but nothing is argued from it. It reports the writer's own state. |
+| sp_029, "…the shoes I set every PB in… wrong size" | `reaction` | Rule 2. It could read as a wry take on shoe talk, but it reports the writer's own realisation. |
 
 **What the pattern in my disagreements tells me:**
 
+With no disagreements, there is no pattern to read. What the 100% does show is that the staff rules are tight: each boundary has one test that gives a yes or no answer. "Is the fact load-bearing?" and "Is it about the writer or about the world?" settled all 7 borderline posts without needing Rule 4, the tie-break.
 
+That doesn't make this set easy. It means the written rule did its job. It also means this check found no sign that I apply a written rule loosely, at least when I label 30 posts carefully, by myself.
+
+That matters for Milestone 4, because my own 438 labels don't look this clean. Claude flagged about 24 of them as possibly conflicting with my own rules (see [The Dataset](#the-dataset)). And most of my rows were AI pre-labelled, with my review keeping the AI label on 285 of 370 and on all 121 stretch rows. So the more likely source of my own inconsistency is how I labelled at volume (accepting pre-labels) and my own `reaction`/`opinion` rule (which needs a "strip the feeling" step first), rather than whether I can apply a rule at all.
 
 ---
 
