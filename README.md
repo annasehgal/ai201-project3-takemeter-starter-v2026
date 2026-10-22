@@ -600,26 +600,68 @@ That matters for Milestone 4, because my own 438 labels don't look this clean. C
 
 ## The Improvement
 
-**What I changed:**
+**What I changed:** one training setting. The learning rate went from 2e-5 (the notebook default) to 5e-5 in section 2 of [takemeter.ipynb](takemeter.ipynb).
+
+Everything else stayed the same:
+- **Data:** the same 438-row `labels.csv`.
+- **Splits:** the same three seeds, so the test posts on each seed are identical to the before run.
+- **Settings:** the same 3 epochs, batch size 16 and max length 128.
+
+I set `RUN_LABEL = "after"` before running section 6, so the before numbers in [results_three_seeds_before.json](results_three_seeds_before.json) are untouched. I checked that file's hash before and after the run. Output: [results_three_seeds_after.json](results_three_seeds_after.json). Device: Apple Silicon GPU (MPS), torch 2.14.1.
 
 **Which diagnosis pointed at it:**
+- **The diagnosis:** criterion 1's diagnosis was that the model stopped training before it learned anything beyond `reaction`. Validation loss was still falling at epoch 3 on every seed, and validation macro F1 ended at 0.27–0.34.
+- **Why not more epochs:** Stretch 2 already tried more passes (3 → 6) and moved one post out of 48.
+- **Why learning rate:** it was the untried way to let the model move further in the same training time.
+- **What I didn't fix:** the other diagnosis, the inconsistent `info`/`reaction` boundary, would need relabelling. This unit allows one change, so I left it alone.
 
 ### Run Log — After
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥ 0.75 on every seed | 0.621 | 0.591 | 0.561 | **MISSED** |
+| 2. Every label's F1 | ≥ 0.55 on every seed | min 0.000 (`info`) | min 0.000 (`info`) | min 0.000 (`info`, `question`) | **MISSED** |
+| 3. Label balance in `labels.csv` | largest ≤ 60%, smallest ≥ 15% | `reaction` 43.8%, `question` 11.6% | same file | same file | **MISSED** (unchanged; the data didn't change) |
+| 4. Confidence gap (most-sure third − least-sure third) | ≥ 0.30 on every seed | 0.727 − 0.318 = **0.409** | 0.818 − 0.455 = **0.364** | 0.818 − 0.227 = **0.591** | **MET** |
+| 5. Self re-label agreement (30 rows, `random_state=5`) | ≥ 85% (26/30) | n/a | n/a | n/a | **Not tested** (not valid before 27 Oct) |
+
+**Before and after, side by side** (before → after):
+
+| Measure | Seed 42 | Seed 7 | Seed 2024 |
+|---|---|---|---|
+| Overall accuracy | 0.500 → **0.621** | 0.561 → **0.591** | 0.545 → **0.561** |
+| Macro F1 | 0.271 → **0.517** | 0.323 → **0.470** | 0.298 → **0.318** |
+| F1 — `info` | 0.000 → 0.000 | 0.000 → 0.000 | 0.000 → 0.000 |
+| F1 — `opinion` | 0.452 → **0.529** | 0.625 → **0.650** | 0.519 → **0.588** |
+| F1 — `reaction` | 0.634 → **0.714** | 0.667 → 0.657 | 0.674 → **0.684** |
+| F1 — `question` | 0.000 → **0.824** | 0.000 → **0.571** | 0.000 → 0.000 |
+| Confidence gap | 0.455 → 0.409 | 0.273 → **0.364** | 0.500 → **0.591** |
+
+Confusion matrix after, seed 42 (same test posts as the before matrix):
+
+| true \ predicted | info | opinion | reaction | question |
+|---|---|---|---|---|
+| **info** | 0 | 4 | 7 | 0 |
+| **opinion** | 0 | 9 | 8 | 1 |
+| **reaction** | 0 | 3 | 25 | 1 |
+| **question** | 0 | 0 | 1 | 7 |
 
 **Did it help, and how do I know:**
 
-<!-- If it didn't, say so. Relabelling that didn't help is a genuinely
-     interesting result and earns full credit. -->
+Yes, partly. Raising the learning rate improved accuracy and macro F1 on all three seeds, and it turned criterion 4 from MISSED into MET. It didn't change the verdict on criterion 1 or 2.
 
-
+- **What got better:**
+  - Every seed is better on accuracy (+0.121, +0.030, +0.016) and on macro F1 (+0.246, +0.147, +0.020), on exactly the same test posts.
+  - The model now predicts `question`: 7 of 8 correct on seed 42 and 4 of 8 on seed 7. Before, it never predicted that label on any seed.
+  - It predicts `opinion` more often (16, 22 and 16 times, up from 13, 14 and 9), and `opinion` F1 rose on every seed.
+- **How sure I am that it's real:**
+  - The accuracy gains on seeds 7 and 2024 (3 and 1.6 points) are smaller than the 6-point spread between seeds. On their own they could be noise.
+  - What makes me trust the direction is that the comparison is paired: same seed, same split, same test posts. Every seed improved, and the macro F1 gains on seeds 42 and 7 are much larger than the before spread (0.051).
+  - Validation loss also ended lower on every seed (for example 1.146 → 0.987 on seed 42). That fits the under-training diagnosis.
+- **What it didn't fix:**
+  - **`info` is still 0.000 on every seed.** The model never predicts it, and 7 of 11 `info` posts still go to `reaction`. That is the label my diagnosis tied to inconsistent labelling, not training, so it makes sense that a training setting didn't move it. It is the strongest sign that the next fix is relabelling the `info`/`reaction` boundary.
+  - **Seed 2024 barely moved** and still never predicts `question`. Its validation macro F1 actually fell between epochs 2 and 3 (0.382 → 0.368). So the higher learning rate helps on average but doesn't make training reliable.
+  - **Criterion 1** is still 13 to 19 points short of 0.75.
 
 ---
 
