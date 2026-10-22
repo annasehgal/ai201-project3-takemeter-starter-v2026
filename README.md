@@ -439,29 +439,56 @@ The definitions still work as written rules for a human labeller. But this resul
 <!-- Five criteria across three seeds. The notebook's section 6 prints the
      spread table; the Target and Verdict columns are yours. -->
 
+**Setup:**
+- **Data:** the final four-label `labels.csv` (438 rows: `info`, `opinion`, `reaction`, `question`).
+- **Settings:** the notebook's defaults: `distilbert-base-uncased`, 3 epochs, lr 2e-5, batch 16, max length 128.
+- **Device:** Apple Silicon GPU (MPS), torch 2.14.1.
+- **How it ran:** notebook sections 1–3, then 6 and 7. Section 4's single training run and section 5's write were skipped, so `results.json` and `test_split.csv` from run 1 are unchanged.
+- **Output:** [results_three_seeds_before.json](results_three_seeds_before.json).
+- **Test split:** 66 posts per seed (11 `info`, 18 `opinion`, 29 `reaction`, 8 `question`).
+- **Reproducibility check:** seed 42 reproduced [experiments/results_4labels.json](experiments/results_4labels.json) exactly (accuracy 0.500, macro F1 0.271).
+
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥ 0.75 on every seed | 0.500 | 0.561 | 0.545 | **Missed** |
+| 2. Every label's F1 | ≥ 0.55 on every seed | min 0.000 (`info`, `question`) | min 0.000 (`info`, `question`) | min 0.000 (`info`, `question`) | **Missed** |
+| 3. Label balance in `labels.csv` | largest ≤ 60%, smallest ≥ 15% | `reaction` 43.8%, `question` 11.6% | same file | same file | **Missed** (`question` < 15%) |
+| 4. Confidence gap (most-sure third − least-sure third) | ≥ 0.30 on every seed | 0.682 − 0.227 = **0.455** | 0.727 − 0.455 = **0.273** | 0.818 − 0.318 = **0.500** | **Missed** (seed 7) |
+| 5. Self re-label agreement (30 rows, `random_state=5`) | ≥ 85% (26/30) | n/a | n/a | n/a | **Not yet measured** |
+
+Criterion 3 is a property of the data file, so it is the same on every seed. Criterion 5 is my own blind re-label and doesn't depend on a seed.
+
+Per-measure spread from section 6:
+
+| Measure | Seed 42 | Seed 7 | Seed 2024 | Spread |
+|---|---|---|---|---|
+| Overall accuracy | 0.500 | 0.561 | 0.545 | 0.061 |
+| Macro F1 | 0.271 | 0.323 | 0.298 | 0.051 |
+| F1 — `info` | 0.000 | 0.000 | 0.000 | 0.000 |
+| F1 — `opinion` | 0.452 | 0.625 | 0.519 | 0.173 |
+| F1 — `reaction` | 0.634 | 0.667 | 0.674 | 0.040 |
+| F1 — `question` | 0.000 | 0.000 | 0.000 | 0.000 |
+
+**The spread:** accuracy moved 6.1 points across seeds, under the 10-point line, so the overall number is fairly stable. `opinion` F1 is the jumpy one, moving 17 points.
+
+The stability is mostly not good news, though. The model never predicts `info` or `question` on any seed, so those two F1s are stuck at 0.000. That makes them perfectly stable and perfectly useless. Criterion 1 misses by 19 to 25 points on every seed, far outside the spread, so the miss is real and not an unlucky draw.
 
 ### Confusion matrix
 
-<!-- ⚠️ TYPED AS A MARKDOWN TABLE. The notebook prints one ready to paste.
-     An image of a matrix earns nothing. -->
+Seed 42, the first seed in section 7:
 
-| true \ predicted |  |  |  |
-|---|---|---|---|
-| **** |  |  |  |
-| **** |  |  |  |
-| **** |  |  |  |
+| true \ predicted | info | opinion | reaction | question |
+|---|---|---|---|---|
+| **info** | 0 | 3 | 8 | 0 |
+| **opinion** | 0 | 7 | 11 | 0 |
+| **reaction** | 0 | 3 | 26 | 0 |
+| **question** | 0 | 0 | 8 | 0 |
 
 **My biggest off-diagonal number, and what it means:**
-<!-- Not "the model made mistakes" — WHICH boundary it didn't learn, and which
-     direction. "7 real analysis posts were called hot_take and only 3 went the
-     other way" is a direction, not just an error rate. -->
+
+The model has not learned my hardest boundary, `opinion` vs `reaction`. 11 of the 18 real `opinion` posts were called `reaction`, and only 3 went the other way, so it defaults to `reaction` whenever a comment isn't clearly an opinion.
+
+The same lean shows up on every seed: 8 and 11 `opinion` posts were sent to `reaction` on seeds 7 and 2024. All 8 `question` posts and 8 of 11 `info` posts also went to `reaction` on seed 42. `reaction` works as the catch-all for everything the model can't place.
 
 
 
